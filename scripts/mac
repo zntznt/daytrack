@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Linux: push this branch, run scripts/verify.sh on Thunderbolt through rex, capture the log,
+# and exit with the remote exit code. Usage: scripts/mac <target> [arg]
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+BR=$(git branch --show-current)
+if [[ -z $BR || $BR == main ]]; then echo "scripts/mac: refusing to run on main or a detached HEAD" >&2; exit 2; fi
+if [[ -n $(git status --porcelain) ]]; then echo "scripts/mac: commit your changes first" >&2; exit 2; fi
+git push -q -u origin HEAD || exit 1
+
+q() { printf '%q' "$1"; }
+REMOTE="cd ~/repos/daytrack \
+&& { test -z \"\$(git status --porcelain)\" || exit 3; } \
+&& git fetch -q origin && git switch -q --detach origin/$(q "$BR") \
+&& SIM=$(q "${SIM:-iPhone 18 Pro}") DEVICE=$(q "${DEVICE:-}") scripts/verify.sh $(q "${1:-}") $(q "${2:-}")"
+
+# --wait prints the creation result as pretty JSON; the block id is .block_ids[0] (checked in M0.02).
+OUT=$(rex -S Thunderbolt run -s daytrack --label "verify-$BR" --keep-open --focus=false \
+  --json --shell=none --wait -- zsh -lc "$REMOTE")
+RC=$?
+ID=$(jq -r '.block_ids[0] // empty' <<<"$OUT" 2>/dev/null)
+if [[ -z $ID ]]; then echo "scripts/mac: no block id from rex (exit $RC): $OUT" >&2; exit 1; fi
+
+mkdir -p .verify
+rex -S Thunderbolt capture -s daytrack -b "$ID" --trim --unwrap > .verify/last.log
+tail -n 60 .verify/last.log
+exit "$RC"
