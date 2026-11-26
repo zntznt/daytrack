@@ -1,0 +1,8 @@
+build/
+.build/
+.verify/
+*.xcodeproj/
+Local.xcconfig
+DerivedData/
+.DS_Store
+.atl/
