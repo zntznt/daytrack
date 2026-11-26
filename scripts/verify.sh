@@ -73,7 +73,6 @@ selftest() {
 
 # --- build and test ------------------------------------------------------------------------------
 
-has_project() { [[ -f project.yml ]] || { echo "no project yet"; return 1; }; }
 need_xcodegen() { command -v xcodegen >/dev/null || { echo "xcodegen is missing (owner gate G1)" >&2; return 4; }; }
 # sim_udid: print the UDID of the available simulator named $SIM, or return 5.
 sim_udid() {
@@ -89,7 +88,6 @@ core() {
 }
 
 app() {
-  has_project || return 0
   need_xcodegen || return $?
   sim_udid >/dev/null || return $?
   xcodegen generate --quiet || return 1
@@ -102,7 +100,6 @@ app() {
 }
 
 shots() {
-  has_project || return 0
   [[ -n $ARG ]] || { usage; return 64; }
   need_xcodegen || return $?
   local udid app bid
@@ -131,7 +128,6 @@ shots() {
 }
 
 device() {
-  has_project || return 0
   need_xcodegen || return $?
   [[ -n $DEVICE ]] || { echo "DEVICE is not set" >&2; return 1; }
   xcodegen generate --quiet || return 1

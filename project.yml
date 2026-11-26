@@ -1,0 +1,59 @@
+name: Daytrack
+options:
+  deploymentTarget:
+    iOS: "26.0"
+  # Local.xcconfig is optional and gitignored; simulator builds use the defaults below.
+  disabledValidations: [missingConfigFiles]
+packages:
+  DaytrackKit:
+    path: DaytrackKit
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    BUNDLE_PREFIX: local.dev
+    GENERATE_INFOPLIST_FILE: YES
+    CODE_SIGN_STYLE: Automatic
+targets:
+  Daytrack:
+    type: application
+    platform: iOS
+    sources: [App]
+    configFiles:
+      Debug: Local.xcconfig
+      Release: Local.xcconfig
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_PREFIX).daytrack
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies:
+      - package: DaytrackKit
+        product: DaytrackCore
+      - package: DaytrackKit
+        product: DaytrackStorage
+    scheme:
+      testTargets: [DaytrackAppTests, DaytrackUITests]
+  DaytrackAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [AppTests]
+    configFiles:
+      Debug: Local.xcconfig
+      Release: Local.xcconfig
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_PREFIX).daytrack.tests
+    dependencies:
+      - target: Daytrack
+  DaytrackUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    configFiles:
+      Debug: Local.xcconfig
+      Release: Local.xcconfig
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_PREFIX).daytrack.uitests
+    dependencies:
+      - target: Daytrack
