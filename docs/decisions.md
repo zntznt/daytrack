@@ -429,3 +429,4 @@ Not checked: the iOS 64-pending-notification limit, iOS floating-time triggers, 
 - **Platform (2026-11-26):** a native iOS app in SwiftUI, built in Xcode on the owner's Mac. There is no PWA. This makes Q9 (iOS install before day one) and Q10b (PWA reminders) moot: reminders are local `UNCalendarNotificationTrigger`s, and the widget uses WidgetKit.
 - **Q4 (2026-11-26):** take the recommendation. Tapping a value opens the choice pad (the stops, Skip, Leave blank) in every mode. No single tap erases a value.
 - **Q7a:** confirmed: Today / History / Report / Settings, with Trackers under Settings.
+- **Visual (2026-11-26):** the app is fully Liquid Glass. Rows, the choice pad, strips and chips are glass (`GlassEffectContainer`), over a warm ambient background instead of flat black, so the glass has something to refract. This overrides the flat-dark look in HANDOFF §4. Legibility must still pass with Reduce Transparency and Increase Contrast.
