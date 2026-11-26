@@ -1,3 +1,7 @@
-// Copy to Local.xcconfig (gitignored) and fill in. Needed only for device builds.
-DEVELOPMENT_TEAM = ABCDE12345
-BUNDLE_PREFIX = com.example
+// Base settings for every target (project.yml configFiles). Simulator builds need nothing more.
+// For device builds, copy this file to Local.xcconfig (gitignored) and set your values there.
+DEVELOPMENT_TEAM =
+BUNDLE_PREFIX = local.dev
+
+// Optional: overrides the values above when present.
+#include? "Local.xcconfig"

@@ -2,15 +2,16 @@ name: Daytrack
 options:
   deploymentTarget:
     iOS: "26.0"
-  # Local.xcconfig is optional and gitignored; simulator builds use the defaults below.
-  disabledValidations: [missingConfigFiles]
 packages:
   DaytrackKit:
     path: DaytrackKit
+# The example holds defaults and #include? "Local.xcconfig", so the real file applies when present.
+configFiles:
+  Debug: Local.xcconfig.example
+  Release: Local.xcconfig.example
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    BUNDLE_PREFIX: local.dev
     GENERATE_INFOPLIST_FILE: YES
     CODE_SIGN_STYLE: Automatic
 targets:
@@ -18,9 +19,6 @@ targets:
     type: application
     platform: iOS
     sources: [App]
-    configFiles:
-      Debug: Local.xcconfig
-      Release: Local.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_PREFIX).daytrack
@@ -37,9 +35,6 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources: [AppTests]
-    configFiles:
-      Debug: Local.xcconfig
-      Release: Local.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_PREFIX).daytrack.tests
@@ -49,9 +44,6 @@ targets:
     type: bundle.ui-testing
     platform: iOS
     sources: [UITests]
-    configFiles:
-      Debug: Local.xcconfig
-      Release: Local.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_PREFIX).daytrack.uitests
