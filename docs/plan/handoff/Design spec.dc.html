@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:oklch(.112 .016 60)}
+a{color:oklch(.795 .168 78);text-decoration:none}
+a:hover{color:oklch(.875 .125 84)}
+</style>
+</helmet>
+
+<div style="background:oklch(.112 .016 60);color:oklch(.875 .125 84);min-height:100vh;padding:64px 40px 140px;display:flex;justify-content:center">
+<div style="width:100%;max-width:880px">
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76)">Daytrack · design specification</div>
+  <h1 style="font:600 42px/1.03 'Instrument Sans';letter-spacing:-.035em;margin:15px 0 0">One constraint, and everything that follows from it<span style="color:oklch(.795 .168 78)">.</span></h1>
+  <p style="font:400 15.5px/1.6 'Instrument Sans';color:oklch(.70 .062 78);max-width:620px;margin:17px 0 0;text-wrap:pretty">Daytrack is opened once a day, usually in bed, usually in the dark. Every decision below is downstream of that. Where a value is stated it was measured from the running app, not estimated.</p>
+
+  <div style="margin-top:30px;padding:19px 21px;border:1px solid oklch(.795 .168 78);border-radius:14px;display:flex;gap:15px;align-items:flex-start">
+    <i class="fa-solid fa-moon" style="font-size:13px;color:oklch(.795 .168 78);margin-top:3px" aria-hidden="true"></i>
+    <div style="flex:1">
+      <div style="font:600 16px/1.35 'Instrument Sans'">The rule, and its one declared exception</div>
+      <div style="font:400 13.5px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:7px;text-wrap:pretty">Surfaces and the default accent stay near blue-free, measured at 0–11% blue channel. Text is allowed ~40% because legibility beats dogma. Three optional accents deliberately exceed the ceiling: each carries its measured figure on the swatch and warns when chosen, which is the only sanctioned way past this rule. Any new colour is measured before it ships, never eyeballed.</div>
+    </div>
+  </div>
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76);margin-top:60px">01 · Colour</div>
+  <h2 style="font:600 27px/1.12 'Instrument Sans';letter-spacing:-.03em;margin:13px 0 0">Nine tokens in one hue family, and a declared way out</h2>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:13px 0 0;max-width:640px;text-wrap:pretty">Every token sits between hue 60 and 100 in oklch, and there is no grey, because a neutral grey reads blue against this palette. Lightness carries all hierarchy. The optional accents below are the one place the app leaves that band, by choice and with the cost stated.</p>
+
+  <div style="margin-top:22px;border:1px solid oklch(.325 .042 70);border-radius:13px;overflow:hidden">
+    <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="10">
+      <div style="{{ t.row }}">
+        <div style="{{ t.chip }}"></div>
+        <span style="width:74px;flex:none;font:500 12.5px/1 'IBM Plex Mono';color:oklch(.875 .125 84)">{{ t.name }}</span>
+        <span style="width:168px;flex:none;font:400 11px/1 'IBM Plex Mono';color:oklch(.70 .062 78)">{{ t.oklch }}</span>
+        <span style="width:74px;flex:none;font:400 11px/1 'IBM Plex Mono';color:oklch(.638 .058 76)">{{ t.hex }}</span>
+        <span style="{{ t.blueStyle }}">{{ t.blue }}</span>
+        <span style="flex:1;font:400 11.5px/1.45 'Instrument Sans';color:oklch(.70 .062 78);min-width:0">{{ t.use }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="font:400 11px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.638 .058 76);margin-top:34px">ACCENT, AND WHY THERE ARE SIX</div>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:12px 0 0;max-width:640px;text-wrap:pretty">Settings offers six accents. Three sit inside the ceiling; three cannot and say so on the swatch. Offering them with the number attached is more honest than hiding them, and the warning names the cost rather than scolding.</p>
+  <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap">
+    <sc-for list="{{ accents }}" as="a" hint-placeholder-count="6">
+      <div style="width:118px;padding:13px;border:1px solid oklch(.325 .042 70);border-radius:12px">
+        <div style="{{ a.chip }}"></div>
+        <div style="font:500 12.5px/1 'Instrument Sans';margin-top:11px">{{ a.name }}</div>
+        <div style="{{ a.blueStyle }}">{{ a.blue }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76);margin-top:60px">02 · Type</div>
+  <h2 style="font:600 27px/1.12 'Instrument Sans';letter-spacing:-.03em;margin:13px 0 0">Two families with strict jobs</h2>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:13px 0 0;max-width:640px;text-wrap:pretty">The split is numerals against words, not language against data. IBM Plex Mono carries numbers, dates, counts and uppercase labels, where tabular figures keep columns from dancing as values change. Instrument Sans carries language, and also carries word-scale values: <em style="font-style:normal;color:oklch(.875 .125 84)">Moderate</em> is a measurement, but it is still a word, and setting it in mono makes it look like a code. Two of the three tracker types are worded, so this is the common case rather than an exception, and the size drops with it, from 25px mono down to 14.5px sans, because a word needs no room to be read.</p>
+
+  <div style="display:flex;flex-direction:column;gap:1px;margin-top:22px;background:oklch(.325 .042 70);border:1px solid oklch(.325 .042 70);border-radius:13px;overflow:hidden">
+    <sc-for list="{{ type }}" as="t" hint-placeholder-count="7">
+      <div style="display:flex;gap:20px;align-items:baseline;padding:15px 18px;background:oklch(.15 .022 62)">
+        <span style="width:106px;flex:none;font:400 10px/1.4 'IBM Plex Mono';letter-spacing:.09em;color:oklch(.638 .058 76)">{{ t.role }}</span>
+        <span style="flex:1;min-width:0;{{ t.style }}">{{ t.sample }}</span>
+        <span style="width:158px;flex:none;text-align:right;font:400 10.5px/1.4 'IBM Plex Mono';color:oklch(.638 .058 76)">{{ t.spec }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="font:400 12.5px/1.6 'IBM Plex Mono';color:oklch(.638 .058 76);margin-top:14px;text-wrap:pretty">Five display steps, and the sub-screen step covers 23 to 25px: week and month titles sit at 23, the day detail at 24, confirmations at 25. Treat those as one step and pick by how much sits beside the heading. Tracking splits on brand against interface, not on size. The wordmark and the onboarding hero take −.035em because brand type is set tighter; every interface display size takes −.03em, whatever its size. That is why the 21px wordmark is tracked tighter than the 30px board day, and within Instrument Sans it is the one place where a smaller size is set tighter than a larger one. Below the display sizes there are two more negative steps, both easy to miss and both load-bearing: numerals take −.02em, including mono numerals, because Plex Mono at 25px opens up more than the row can afford; interface labels and word values take −.01em. Mono is therefore tracked in both directions, negative when it is a number and positive when it is an uppercase label, where +.09 to +.14em is what makes 10px caps readable at all. Body text takes none.</div>
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76);margin-top:60px">03 · Space and shape</div>
+  <h2 style="font:600 27px/1.12 'Instrument Sans';letter-spacing:-.03em;margin:13px 0 0">Radius signals scale, not decoration</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px">
+    <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:18px 19px">
+      <div style="font:400 10px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.638 .058 76)">RADIUS</div>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px">
+        <sc-for list="{{ radii }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex;gap:13px;align-items:center">
+            <div style="{{ r.box }}"></div>
+            <span style="width:52px;font:400 11.5px/1 'IBM Plex Mono';color:oklch(.875 .125 84)">{{ r.v }}</span>
+            <span style="flex:1;font:400 11.5px/1.4 'Instrument Sans';color:oklch(.70 .062 78)">{{ r.use }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:18px 19px">
+      <div style="font:400 10px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.638 .058 76)">RHYTHM</div>
+      <div style="font:400 13px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin-top:13px;text-wrap:pretty">The icon tile's radius runs at roughly 28% of its own size, 15 on 52 and 18 on 64, which are 28.8% and 28.1% rather than one constant. The favicon and the SVG mark are cut to the 52px ratio. If a third tile size is ever needed, take 28.8% and round to a whole pixel. Related items cluster at gap 8 / 11 / 12. Sections are separated by <em style="font-style:normal;color:oklch(.875 .125 84)">margin-top</em>, and that is the one place a margin is the right tool. The section label ships at 22, 26, 28 and 30px, with 28 accounting for 8 of the 19 uses; the onboarding and printed-sheet labels, which are styled differently, sit at 34. Treat 28 as the step and only leave it when a screen is unusually dense or unusually empty. Everything inside a section is spaced with a flex <em style="font-style:normal;color:oklch(.875 .125 84)">gap</em>, which survives reordering and deletion where source whitespace and per-item margins do not.</div>
+      <div style="font:400 13px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin-top:13px;text-wrap:pretty">Phone screens pad 26px top and 22px at the sides; printed sheets pad 52px top and 54px at the sides, which is roughly double and is what keeps a sheet from reading like a screenshot. Minimum hit target is 44px. Where a control looks smaller than that, it is padded out with negative margins so the visual size stays honest.</div>
+    </div>
+  </div>
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76);margin-top:60px">04 · Components</div>
+  <h2 style="font:600 27px/1.12 'Instrument Sans';letter-spacing:-.03em;margin:13px 0 0">The slider row is the whole app</h2>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:13px 0 0;max-width:640px;text-wrap:pretty">Everything else is scaffolding around it. It ships in three interchangeable modes so that a tremor, low vision, or a preference for tapping never costs a day of data. All three write the same value, and switching modes never alters what is stored.</p>
+
+  <div style="margin-top:22px;background:oklch(.15 .022 62);border:1px solid oklch(.325 .042 70);border-radius:14px;padding:22px">
+    <sc-for list="{{ demo }}" as="d" hint-placeholder-count="3">
+      <div style="{{ d.wrap }}">
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <span style="font:400 10px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.795 .168 78)">{{ d.label }}</span>
+          <span style="font:400 11px/1.4 'IBM Plex Mono';color:oklch(.638 .058 76)">{{ d.note }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:13px">
+          <i class="fa-solid fa-moon" style="font-size:12px;width:16px;color:oklch(.70 .062 78)" aria-hidden="true"></i>
+          <span style="{{ d.nameStyle }}">Sleep</span>
+          <div style="{{ d.trackWrap }}">
+            <div style="{{ d.track }}">
+              <div style="{{ d.fill }}"></div>
+              <div style="{{ d.handle }}"></div>
+            </div>
+          </div>
+          <span style="{{ d.valStyle }}">{{ d.val }}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+    <sc-for list="{{ patterns }}" as="p" hint-placeholder-count="4">
+      <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:17px 18px">
+        <div style="font:500 14px/1.3 'Instrument Sans'">{{ p.name }}</div>
+        <div style="font:400 12.5px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:8px;text-wrap:pretty">{{ p.body }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <h3 style="font:600 19px/1.2 'Instrument Sans';letter-spacing:-.03em;margin:44px 0 0">Two more, added with the OS and offline screens</h3>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:11px 0 0;max-width:640px;text-wrap:pretty">Neither introduces a token. Both exist because a fact about the device had to be shown rather than described: which platform you are reading about, and how much of the app is on the phone so far.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px">
+    <div style="background:oklch(.15 .022 62);border:1px solid oklch(.325 .042 70);border-radius:14px;padding:20px">
+      <div style="font:400 10px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.795 .168 78)">SEGMENTED CONTROL</div>
+      <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76);margin-top:8px">Two or three peers, one visible at a time. Never for a destructive or one-way choice.</div>
+      <div style="display:flex;gap:6px;margin-top:18px;padding:4px;background:oklch(.202 .028 64);border-radius:12px">
+        <div style="flex:1;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;font:500 12.5px/1 'Instrument Sans';background:oklch(.262 .036 68);color:oklch(.875 .125 84);border:1px solid oklch(.325 .042 70)"><i class="fa-brands fa-apple" style="font-size:12px"></i>iPhone</div>
+        <div style="flex:1;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;font:500 12.5px/1 'Instrument Sans';color:oklch(.70 .062 78);border:1px solid transparent"><i class="fa-brands fa-android" style="font-size:12px"></i>Android</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:16px">
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Trough <span style="color:oklch(.875 .125 84)">--sf</span>, radius 12, padding 4</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Chip 38px, radius 10, gap 6 — a 46px row with the trough padding, clearing the 44px floor</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Selected <span style="color:oklch(.875 .125 84)">--sf2</span> + <span style="color:oklch(.875 .125 84)">--ln</span> border · unselected transparent border, <span style="color:oklch(.875 .125 84)">--dm</span> label</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Instrument 500 · 12.5px · glyph 12px. No accent fill: the accent stays on the CTA</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">ARIA: <span style="color:oklch(.875 .125 84)">role="tablist"</span>, one <span style="color:oklch(.875 .125 84)">aria-selected</span>. Arrow keys move, no wrap</div>
+      </div>
+    </div>
+
+    <div style="background:oklch(.15 .022 62);border:1px solid oklch(.325 .042 70);border-radius:14px;padding:20px">
+      <div style="font:400 10px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.795 .168 78)">DETERMINATE BAR</div>
+      <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76);margin-top:8px">Only where a real figure exists. There is no spinner in the app, and no indeterminate state anywhere.</div>
+      <div style="margin-top:18px;background:oklch(.202 .028 64);border:1px solid oklch(.325 .042 70);border-radius:13px;padding:15px 16px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <span style="font:500 13px/1 'Instrument Sans'">Storing the app</span>
+          <span style="font:400 11px/1 'IBM Plex Mono';color:oklch(.638 .058 76)">280 / 412 KB</span>
+        </div>
+        <div style="height:6px;border-radius:5px;background:oklch(.262 .036 68);margin-top:12px;overflow:hidden">
+          <div style="width:68%;height:100%;border-radius:5px;background:oklch(.795 .168 78)"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:16px">
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Track 6px, radius 5 — thinner than the slider's 9px, because it is read, not touched</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Track <span style="color:oklch(.875 .125 84)">--sf2</span>, fill <span style="color:oklch(.875 .125 84)">--ac</span>, no handle and no tick</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Figure above right in mono 11px, always absolute over total — never a bare percentage</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">Sits in a 13px card with a 12px gap to the label row</div>
+        <div style="font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)">No transition on the fill. It steps as the number does, and the number is the truth</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font:600 19px/1.2 'Instrument Sans';letter-spacing:-.03em;margin:44px 0 0">Marking what is PWA and what is native</h3>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:11px 0 0;max-width:640px;text-wrap:pretty">Both packagings ship, so the prototype badges every frame that exists in only one of them. Most of the app is unbadged: the board, the record, the statistics and the printed sheets are identical either way. The badge sits above the phone, never inside the screen — it is a note to the reader, not UI.</p>
+
+  <div style="display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap">
+    <span style="font:400 9px/1 'IBM Plex Mono';letter-spacing:.1em;padding:4px 6px;border-radius:4px;border:1px solid oklch(.325 .042 70);color:oklch(.638 .058 76)">PWA</span>
+    <span style="font:400 12.5px/1.5 'Instrument Sans';color:oklch(.70 .062 78)">Home-screen build only — install, icon badge and long-press, the update strip and “What changed”, the caching states, and the two home-screen scheduling panels.</span>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap">
+    <span style="font:400 9px/1 'IBM Plex Mono';letter-spacing:.1em;padding:4px 6px;border-radius:4px;border:1px solid oklch(.80 .155 100);color:oklch(.80 .155 100)">NATIVE</span>
+    <span style="font:400 12.5px/1.5 'Instrument Sans';color:oklch(.70 .062 78)">Native build only — the permission prompt, notification actions, the real widget, the two native scheduling panels, and the storage screen where backup is excluded.</span>
+  </div>
+  <div style="font:400 11px/1.55 'IBM Plex Mono';color:oklch(.638 .058 76);margin-top:16px;max-width:640px;text-wrap:pretty">Badge <span style="color:oklch(.875 .125 84)">Plex Mono 400 · 9px · +.1em</span>, radius 4, padding 4/6. PWA takes <span style="color:oklch(.875 .125 84)">--ln</span> border and <span style="color:oklch(.875 .125 84)">--ft</span> text; NATIVE takes <span style="color:oklch(.875 .125 84)">--ok</span> for both. The accent is not used — a badge is not a state of the app.</div>
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76);margin-top:60px">05 · Motion</div>
+  <h2 style="font:600 27px/1.12 'Instrument Sans';letter-spacing:-.03em;margin:13px 0 0">One curve, four declarations</h2>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:13px 0 0;max-width:640px;text-wrap:pretty">There are no entrance animations, no page transitions, and no setting to disable them because there is no effect to disable. Reduced Motion is honoured globally at the stylesheet level rather than per component. The complete inventory is four declarations on one curve:</p>
+
+  <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;margin-top:20px;overflow:hidden">
+    <div style="display:grid;grid-template-columns:1.15fr 1fr .5fr 1.15fr;gap:0;font:500 9.5px/1 'IBM Plex Mono';letter-spacing:.1em;text-transform:uppercase;color:oklch(.638 .058 76);padding:12px 16px;border-bottom:1px solid oklch(.325 .042 70)">
+      <div>Element</div><div>Property</div><div>Time</div><div>Suppressed when</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.15fr 1fr .5fr 1.15fr;gap:0;font:400 12.5px/1.45 'Instrument Sans';color:oklch(.70 .062 78);padding:12px 16px;border-bottom:1px solid oklch(.28 .036 70)">
+      <div style="color:oklch(.93 .02 84)">Track fill</div><div style="font-family:'IBM Plex Mono';font-size:11.5px">width</div><div style="font-family:'IBM Plex Mono';font-size:11.5px;color:oklch(.875 .125 84)">160ms</div><div>dragging</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.15fr 1fr .5fr 1.15fr;gap:0;font:400 12.5px/1.45 'Instrument Sans';color:oklch(.70 .062 78);padding:12px 16px;border-bottom:1px solid oklch(.28 .036 70)">
+      <div style="color:oklch(.93 .02 84)">Handle</div><div style="font-family:'IBM Plex Mono';font-size:11.5px">left</div><div style="font-family:'IBM Plex Mono';font-size:11.5px;color:oklch(.875 .125 84)">160ms</div><div>dragging</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.15fr 1fr .5fr 1.15fr;gap:0;font:400 12.5px/1.45 'Instrument Sans';color:oklch(.70 .062 78);padding:12px 16px;border-bottom:1px solid oklch(.28 .036 70)">
+      <div style="color:oklch(.93 .02 84)">Handle</div><div style="font-family:'IBM Plex Mono';font-size:11.5px">transform 1 → 1.18</div><div style="font-family:'IBM Plex Mono';font-size:11.5px;color:oklch(.875 .125 84)">120ms</div><div>dragging</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.15fr 1fr .5fr 1.15fr;gap:0;font:400 12.5px/1.45 'Instrument Sans';color:oklch(.70 .062 78);padding:12px 16px">
+      <div style="color:oklch(.93 .02 84)">Editor chevron</div><div style="font-family:'IBM Plex Mono';font-size:11.5px">transform 0° → 90°</div><div style="font-family:'IBM Plex Mono';font-size:11.5px;color:oklch(.875 .125 84)">180ms</div><div>—</div>
+    </div>
+  </div>
+  <div style="font:400 11px/1.55 'IBM Plex Mono';color:oklch(.638 .058 76);margin-top:14px;max-width:640px;text-wrap:pretty">Curve is <span style="color:oklch(.875 .125 84)">cubic-bezier(.22,1,.36,1)</span> throughout, except the 120ms handle scale which takes the browser default — it is a pressure cue, not a position, and easing it makes the finger feel late.</div>
+
+  <h3 style="font:600 17px/1.2 'Instrument Sans';letter-spacing:-.02em;margin:40px 0 0">The eight-tap interaction, frame by frame</h3>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:11px 0 0;max-width:640px;text-wrap:pretty">Eight tracks, one press each, ten seconds. The governing rule: <em style="font-style:normal;color:oklch(.93 .02 84)">no motion may sit between a press and the value being visible</em>. On every entry path except the keyboard, the new value paints on the first frame after the event — the eased curve above never actually plays during a drag.</p>
+
+  <div style="display:grid;gap:12px;margin-top:20px;max-width:640px">
+    <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:16px 18px">
+      <div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 9.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.875 .125 84)">01</span><span style="font:500 14px/1 'Instrument Sans'">pointerdown</span><span style="margin-left:auto;font:400 11px/1 'IBM Plex Mono';color:oklch(.638 .058 76)">0ms</span></div>
+      <div style="font:400 13px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:9px;text-wrap:pretty">The value is set from the press x immediately — not on first move. The pointer is captured, transitions on fill and handle are dropped in the same state change, and the handle jumps to 1.18. Because the transition string is removed on the frame the drag begins, the jump to the finger is instant rather than a 160ms slide from wherever the value used to be. The numeral recolours <span style="font-family:'IBM Plex Mono';font-size:11.5px">--tx → --ac</span>, uncoloured and unanimated, as a "you are holding this" signal.</div>
+    </div>
+    <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:16px 18px">
+      <div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 9.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.875 .125 84)">02</span><span style="font:500 14px/1 'Instrument Sans'">pointermove</span><span style="margin-left:auto;font:400 11px/1 'IBM Plex Mono';color:oklch(.638 .058 76)">per event</span></div>
+      <div style="font:400 13px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:9px;text-wrap:pretty">The value is recomputed per pointer event and quantised to the stop grid — eleven stops for a 0–10 track, one per label otherwise. There is no interpolation and no smoothing: the fill width <em style="font-style:normal;color:oklch(.93 .02 84)">is</em> the value. The handle therefore snaps between stops rather than gliding, which is correct — the data is discrete and the control should not imply otherwise.</div>
+    </div>
+    <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:16px 18px">
+      <div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 9.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:oklch(.875 .125 84)">03</span><span style="font:500 14px/1 'Instrument Sans'">pointerup</span><span style="margin-left:auto;font:400 11px/1 'IBM Plex Mono';color:oklch(.638 .058 76)">120ms</span></div>
+      <div style="font:400 13px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:9px;text-wrap:pretty">Transitions are restored on the same frame, but nothing moves — the value is already where the finger left it. The only motion that ever plays at the end of a drag is the handle relaxing 1.18 → 1 over 120ms. No commit flourish, no checkmark, no row collapse. The value standing still is the confirmation.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;max-width:640px">
+    <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:16px 18px">
+      <div style="font:500 14px/1 'Instrument Sans'">Tap path</div>
+      <div style="font:400 12.5px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:9px;text-wrap:pretty">The stepper pad opens with no transition, commits on tap, and closes on the same frame. Two taps, zero animation. The setting exists for people who find aiming hard — a pad that animates open is a pad you have to wait for.</div>
+    </div>
+    <div style="border:1px solid oklch(.325 .042 70);border-radius:13px;padding:16px 18px">
+      <div style="font:500 14px/1 'Instrument Sans'">Keyboard path</div>
+      <div style="font:400 12.5px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:9px;text-wrap:pretty">Arrows step ±1, Home and End jump to the ends. This is the <em style="font-style:normal;color:oklch(.93 .02 84)">only</em> path where the 160ms fill is visible on the board — the one case where the value changes without a finger already sitting at the destination.</div>
+    </div>
+  </div>
+
+  <h3 style="font:600 17px/1.2 'Instrument Sans';letter-spacing:-.02em;margin:36px 0 0">Haptics</h3>
+  <div style="display:flex;gap:8px;margin-top:11px">
+    <span style="font:400 9px/1 'IBM Plex Mono';letter-spacing:.1em;border:1px solid oklch(.325 .042 70);color:oklch(.638 .058 76);border-radius:4px;padding:4px 6px">PWA</span>
+    <span style="font:400 9px/1 'IBM Plex Mono';letter-spacing:.1em;border:1px solid oklch(.72 .13 148);color:oklch(.72 .13 148);border-radius:4px;padding:4px 6px">NATIVE</span>
+  </div>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:13px 0 0;max-width:640px;text-wrap:pretty">One event only: a <em style="font-style:normal;color:oklch(.93 .02 84)">selection tick</em> each time the drag crosses a stop — <span style="font-family:'IBM Plex Mono';font-size:11.5px;color:oklch(.875 .125 84)">UISelectionFeedbackGenerator</span> on iOS, <span style="font-family:'IBM Plex Mono';font-size:11.5px;color:oklch(.875 .125 84)">CLOCK_TICK</span> on Android. Nothing on pointerup, nothing on the eighth track, nothing when the day closes. Eight tracks a night is roughly eighty ticks; a success buzz on top of that is punishment, and a celebration for recording a bad day is the exact tonal failure §06 exists to prevent. <span style="color:oklch(.93 .02 84)">PWA:</span> the Vibration API is unavailable on iOS Safari and coarse elsewhere — ship the tick native-only and degrade silently. No fallback, no setting, no explanation on screen.</p>
+
+  <h3 style="font:600 17px/1.2 'Instrument Sans';letter-spacing:-.02em;margin:36px 0 0">Two rules for anyone extending this</h3>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:11px 0 0;max-width:640px;text-wrap:pretty"><strong style="font-weight:500;color:oklch(.93 .02 84)">The board never re-renders under a moving finger.</strong> If the day-close boundary is reached mid-drag, the lock is deferred and fires on pointerup instead. Any future timed change to Today must defer the same way.<br><br><strong style="font-weight:500;color:oklch(.93 .02 84)">Reduced Motion changes nothing about the primary interaction</strong> — the drag path has no motion to remove. Only the chevron and the keyboard fill stop easing. If a new effect would make the app feel different with Reduced Motion on, it does not belong here.</p>
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76);margin-top:60px">06 · Voice</div>
+  <h2 style="font:600 27px/1.12 'Instrument Sans';letter-spacing:-.03em;margin:13px 0 0">State the fact, then say why it is fine</h2>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:13px 0 0;max-width:640px;text-wrap:pretty">Daytrack asks people to record how bad things are. It cannot also be cheerful about it. The voice is plain, specific, and never congratulates. There are no streaks to break and nothing to be proud of, only days that were written and days that were not.</p>
+
+  <div style="display:flex;flex-direction:column;gap:20px;margin-top:26px">
+    <sc-for list="{{ rules }}" as="r" hint-placeholder-count="5">
+      <div style="display:flex;gap:18px;align-items:flex-start">
+        <div style="font:400 22px/1 'IBM Plex Mono';color:oklch(.795 .168 78);width:32px;flex:none">{{ r.n }}</div>
+        <div style="flex:1">
+          <div style="font:500 15.5px/1.4 'Instrument Sans'">{{ r.head }}</div>
+          <div style="font:400 13px/1.6 'Instrument Sans';color:oklch(.70 .062 78);margin-top:6px;text-wrap:pretty">{{ r.body }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin-top:30px;border-left:2px solid oklch(.795 .168 78);padding:4px 0 4px 21px;display:flex;flex-direction:column;gap:15px">
+    <div style="font:400 16px/1.5 'Instrument Sans';color:oklch(.875 .125 84);text-wrap:pretty">“A fresh phone has nothing to disagree with, so there is nothing to choose.”</div>
+    <div style="font:400 16px/1.5 'Instrument Sans';color:oklch(.875 .125 84);text-wrap:pretty">“They stay blank. The chart will show the hole, and the hole is true.”</div>
+    <div style="font:400 16px/1.5 'Instrument Sans';color:oklch(.875 .125 84);text-wrap:pretty">“The record starts the first time you write a day.”</div>
+    <div style="font:400 11.5px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76);margin-top:2px">The three best sentences in the app. All three are empty states, and all three have the same shape.</div>
+  </div>
+
+  <div style="font:500 11px/1 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:oklch(.638 .058 76);margin-top:60px">07 · Paper</div>
+  <h2 style="font:600 27px/1.12 'Instrument Sans';letter-spacing:-.03em;margin:13px 0 0">The report inverts everything</h2>
+  <p style="font:400 14.5px/1.65 'Instrument Sans';color:oklch(.70 .062 78);margin:13px 0 0;max-width:640px;text-wrap:pretty">Printed sheets are ink on warm white at Letter 612 × 792, one section per sheet, amber demoted to a spot accent. The dark palette exists for a phone at night; paper has the opposite problem. Vocabulary shifts too. The screen says <em style="font-style:normal;color:oklch(.875 .125 84)">you</em>, the sheet says <em style="font-style:normal;color:oklch(.875 .125 84)">the patient</em>, and clinical terms of art that would sound evasive in the app are correct there.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:20px">
+    <sc-for list="{{ paper }}" as="p" hint-placeholder-count="3">
+      <div style="border:1px solid oklch(.325 .042 70);border-radius:12px;padding:15px 16px">
+        <div style="font:500 13px/1.3 'Instrument Sans'">{{ p.name }}</div>
+        <div style="font:400 11.5px/1.55 'IBM Plex Mono';color:oklch(.70 .062 78);margin-top:8px;text-wrap:pretty">{{ p.body }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="border-top:1px solid oklch(.325 .042 70);margin-top:64px;padding-top:26px;font:400 11.5px/1.7 'IBM Plex Mono';color:oklch(.638 .058 76);max-width:640px;text-wrap:pretty">Every colour, size and interval above was read out of the running app. If a value here and the app disagree, the app is wrong or this document is stale. Check which before building on either.</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:1200}}">
+const CEIL = 11;
+
+const TOK = [
+  ['--bg',  'oklch(.15 .022 62)',  '#120903', 1,  'Screen behind every phone frame'],
+  ['--sf',  'oklch(.202 .028 64)', '#1f1408', 3,  'Cards, list groups, raised panels'],
+  ['--sf2', 'oklch(.262 .036 68)', '#302110', 6,  'Unfilled track, dividers, inactive chip'],
+  ['--ln',  'oklch(.325 .042 70)', '#42301b', 11, 'Every border and dashed caution edge'],
+  ['--tx',  'oklch(.875 .125 84)', '#fdcf6f', 44, 'Primary text, the lightest token, and still amber'],
+  ['--dm',  'oklch(.70 .062 78)',  '#b49a73', 45, 'Secondary text, icons at rest'],
+  ['--ft',  'oklch(.638 .058 76)', '#a08764', 39, 'Captions, mono labels, the quiet layer'],
+  ['--ac',  'oklch(.795 .168 78)', '#f6ac00', 0,  'Fill, handles, CTA, one thing per screen'],
+  ['--ok',  'oklch(.80 .155 100)', '#d5bf2c', 17, 'Two jobs: confirmed state, and the second series on a two-line chart. Never decoration']
+];
+
+const ACS = [
+  ['Amber',  'oklch(.795 .168 78)', 0],
+  ['Ember',  'oklch(.775 .175 62)', 7],
+  ['Copper', 'oklch(.72 .19 50)',   1],
+  ['Clay',   'oklch(.72 .17 44)',   25],
+  ['Moss',   'oklch(.78 .145 128)', 36],
+  ['Rose',   'oklch(.70 .175 22)',  42]
+];
+
+const TYPE = [
+  ['Hero',       'Everything stays on this phone.', "font:600 38px/1.05 'Instrument Sans';letter-spacing:-.035em", 'Instrument 600 · 38px · −.035em'],
+  ['Board day',  'Thursday',              "font:600 30px/1 'Instrument Sans';letter-spacing:-.03em", 'Instrument 600 · 30px · −.03em'],
+  ['Screen head','Put it on the home screen', "font:600 27px/1.15 'Instrument Sans';letter-spacing:-.03em", 'Instrument 600 · 27px · −.03em'],
+  ['Sub-screen', 'This week',             "font:600 23px/1.1 'Instrument Sans';letter-spacing:-.03em", 'Instrument 600 · 23–25px · −.03em'],
+  ['Wordmark',   'Daytrack.',             "font:600 21px/1 'Instrument Sans';letter-spacing:-.035em", 'Instrument 600 · 21px · −.035em'],
+  ['Row label',  'Sleep',                 "font:500 15px/1 'Instrument Sans';letter-spacing:-.01em", 'Instrument 500 · 15px · −.01em'],
+  ['Row label · large', 'Sleep',           "font:500 21px/1.25 'Instrument Sans';letter-spacing:-.01em", 'Instrument 500 · 21px · −.01em'],
+  ['Body',       'It closes at 23:00 and asks again tomorrow.', "font:400 12.5px/1.6 'Instrument Sans'", 'Instrument 400 · 12.5px/1.6'],
+  ['Value',      '7',                     "font:400 25px/1 'IBM Plex Mono';letter-spacing:-.02em", 'Plex Mono 400 · 25px · −.02em'],
+  ['Word value', 'Moderate',              "font:500 14.5px/1.25 'Instrument Sans';letter-spacing:-.01em", 'Instrument 500 · 14.5px · −.01em'],
+  ['Mono label', 'NIGHT SHADE',           "font:400 10px/1 'IBM Plex Mono';letter-spacing:.1em", 'Plex Mono 400 · 10px · +.1em'],
+  ['Caption',    '128 days of record · since 25 April 2026', "font:400 11px/1.5 'IBM Plex Mono';color:oklch(.638 .058 76)", 'Plex Mono 400 · 11px']
+];
+
+const RAD = [
+  ['999px', 'Chips and pills only'],
+  ['18px',  'App-icon tile at 64px, and panels at that scale'],
+  ['15px',  'App-icon tile at 52px, and panels at that scale'],
+  ['14px',  'Primary CTA at height 50, and outer cards'],
+  ['13px',  'Settings and content cards, standalone dashed panels'],
+  ['12px',  'Swatches, secondary buttons, inline tiles'],
+  ['11px',  'Nested panels inside a card'],
+  ['10px',  'Toggles and small stepper keys'],
+  ['5px',   'Slider track and fill'],
+  ['2px',   'Tick marks and micro bars']
+];
+
+const PAT = [
+  ['Card', 'Surface --sf, radius 13, padding 15–18. No shadow on any surface: elevation is lightness, because a shadow on a near-black panel is invisible and costs a repaint. The slider handle is the single exception, and only to lift it off its own track.'],
+  ['List row', 'A 12px glyph in a 15px slot at --dm, label flex-1 at 500/14, value or control right-aligned, 1px --sf2 divider inset to 43px so it starts at the label rather than the icon. The slot is wider than the glyph on purpose: it is what keeps a row of mixed icons optically aligned.'],
+  ['Caution panel', 'Dashed --ln border, icon at --ac, radius following its container: 11 when nested inside a card, 13 to 18 when the panel is the only thing on the screen. Used for anything the app wants read but is not blocking on, never for errors, which the app has almost none of.'],
+  ['Primary CTA', 'Height 50, radius 14, --ac fill with near-black text. One per screen. The onboarding start button is the single 52px exception, because it carries the whole first screen. When disabled it drops to --sf2 with --ft text and states the reason underneath rather than sitting dead.']
+];
+
+const RULES = [
+  ['01', 'State the fact, then say why it is fine.', 'Never the fact alone. An empty state that only reports emptiness reads as a failure the user caused.'],
+  ['02', 'Data is written, never logged or recorded.', 'A day is written or it is blank. A tracker is skipped on purpose. Those are the only three words for the state of a value. The noun “the record” is the whole body of days and stays.'],
+  ['03', 'Every “not enough” carries a count, a reason and a remainder.', 'How many there are, why that is too few, how many more. Bare adjectives such as thin, too few or not enough are all failures on their own.'],
+  ['04', '“Nothing” is reserved for three jobs.', 'What leaves the phone, what the app will not do without you, and the plain fact that no data exists. It is the strongest promise in the app; spending it on a flourish costs the privacy copy.'],
+  ['05', 'Never congratulate, never scold.', 'No streaks, no encouragement, no “great job”. A gap is information, not a lapse in character, and the copy has to survive being read on a bad day.']
+];
+
+const PAPER = [
+  ['Ink on warm white', 'Sheet #fbfaf7, text near-black. Amber survives only as a rule or a single mark.'],
+  ['One section per sheet', 'Summary, provenance, charts, a sheet per pair, the table, the notes. No section starts mid-sheet. Pairs and the day-by-day table do continue across sheets, and each says so in its own caption.'],
+  ['Owns its caveats', 'Every sheet footer carries the date and “self-reported, not a clinical instrument”, because sheets get separated.']
+];
+
+class Component extends DCLogic {
+  renderVals() {
+    const over = b => b > CEIL;
+    const blueStyle = b => "flex:none;width:62px;font:400 11px/1 'IBM Plex Mono';color:"
+      + (over(b) ? 'oklch(.70 .15 38)' : 'oklch(.74 .15 148)');
+    return {
+      tokens: TOK.map(([name, oklch, hex, blue, use], i) => ({
+        name, oklch, hex, blue: blue + '% blue', use,
+        blueStyle: blueStyle(blue),
+        chip: 'width:34px;height:34px;flex:none;border-radius:9px;border:1px solid oklch(.325 .042 70);background:' + oklch,
+        row: 'display:flex;align-items:center;gap:15px;padding:12px 16px;background:'
+          + (i % 2 ? 'oklch(.132 .019 61)' : 'oklch(.15 .022 62)')
+      })),
+      accents: ACS.map(([name, v, blue]) => ({
+        name, blue: blue + '% blue',
+        chip: 'height:40px;border-radius:9px;background:' + v,
+        blueStyle: "font:400 10.5px/1 'IBM Plex Mono';margin-top:6px;color:"
+          + (over(blue) ? 'oklch(.70 .15 38)' : 'oklch(.74 .15 148)')
+      })),
+      type: TYPE.map(([role, sample, style, spec]) => ({ role, sample, style, spec })),
+      radii: RAD.map(([v, use]) => ({
+        v, use,
+        box: 'width:34px;height:34px;flex:none;background:oklch(.262 .036 68);border:1px solid oklch(.325 .042 70);border-radius:' + v
+      })),
+      patterns: PAT.map(([name, body]) => ({ name, body })),
+      rules: RULES.map(([n, head, body]) => ({ n, head, body })),
+      paper: PAPER.map(([name, body]) => ({ name, body })),
+      demo: [
+        { label: 'DRAG', note: 'default, anywhere on the track', wrap: '',
+          nameStyle: "flex:1;font:500 15px/1 'Instrument Sans';letter-spacing:-.01em",
+          trackWrap: 'flex:none;width:150px',
+          track: 'position:relative;height:9px;border-radius:5px;background:oklch(.262 .036 68)',
+          fill: 'position:absolute;top:0;bottom:0;left:0;width:70%;border-radius:5px;background:oklch(.795 .168 78)',
+          handle: 'position:absolute;top:-7px;left:70%;margin-left:-2.5px;width:5px;height:23px;border-radius:3px;background:oklch(.875 .125 84);box-shadow:0 2px 8px rgba(0,0,0,.5)',
+          val: '7', valStyle: "flex:none;width:44px;text-align:right;font:400 25px/1 'IBM Plex Mono';letter-spacing:-.02em" },
+        { label: 'STEPPER', note: 'two taps, no aiming, 44px targets', wrap: 'margin-top:22px;padding-top:20px;border-top:1px solid oklch(.202 .028 64)',
+          nameStyle: "flex:1;font:500 15px/1 'Instrument Sans';letter-spacing:-.01em",
+          trackWrap: 'flex:none;width:150px',
+          track: 'position:relative;height:6px;border-radius:5px;background:oklch(.262 .036 68)',
+          fill: 'position:absolute;top:0;bottom:0;left:0;width:70%;border-radius:5px;background:oklch(.795 .168 78)',
+          handle: 'display:none',
+          val: '7', valStyle: "flex:none;width:58px;height:44px;margin:-11px 0;display:flex;align-items:center;justify-content:center;font:400 25px/1 'IBM Plex Mono'" },
+        { label: 'LARGE', note: 'for low vision, one row per screenful', wrap: 'margin-top:22px;padding-top:20px;border-top:1px solid oklch(.202 .028 64)',
+          nameStyle: "flex:1;font:500 21px/1.25 'Instrument Sans';letter-spacing:-.01em",
+          trackWrap: 'flex:1',
+          track: 'position:relative;height:14px;border-radius:7px;background:oklch(.262 .036 68)',
+          fill: 'position:absolute;top:0;bottom:0;left:0;width:70%;border-radius:7px;background:oklch(.795 .168 78)',
+          handle: 'position:absolute;top:-9px;left:70%;margin-left:-4px;width:8px;height:32px;border-radius:4px;background:oklch(.875 .125 84);box-shadow:0 2px 8px rgba(0,0,0,.5)',
+          val: '7', valStyle: "flex:none;min-width:76px;text-align:right;font:400 27px/1 'IBM Plex Mono'" }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
