@@ -188,7 +188,7 @@ Tasks M0.01 and M0.02 come before done.sh exists, so each lists its own literal 
 | M0 Foundations | Bundle in the repo, rulebook, Mac runner, an empty app that builds green | M0.01–M0.03 | 3 |
 | M1 Domain core | Every honesty rule as pure tested Swift: days and closing, entries with set/skip/blank, revisions and eras, stats windows and floors, derived copy, the copy-file codec, the reminder plan | M1.01–M1.10 | 10 |
 | M2 Storage and use cases | A durable store and the application services | M2.01–M2.03 | 3 |
-| **M3 MVP, on the owner's phone** | **Onboarding, the board with the pad, amend yesterday, note, lock hour, save a full copy, erase, the daily reminder, basic trackers, installed on the iPhone** | M3.01–M3.15 | 15 |
+| **M3 MVP, on the owner's phone** | **Onboarding, the board with the pad, amend yesterday, note, lock hour, save a full copy, erase, the daily reminder, basic trackers, installed on the iPhone** | M3.01–M3.17 (M3.16–17: G4 polish) | 17 |
 | M4 Trackers complete | Entry modes, create and edit with revisions, reorder, bring back, delete | M4.01–M4.03 | 3 |
 | M5 Read side | Pairs and week domain, History, tracker detail, day detail, Week and Month, Compare | M5.01–M5.07 | 7 |
 | M6 Report | Draft and provenance, pagination, builder, sheets, PDF | M6.01–M6.07 | 7 |
