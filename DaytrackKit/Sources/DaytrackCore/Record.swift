@@ -1,6 +1,6 @@
 import Foundation
 
-/// Everything Daytrack keeps. Codable arrives with the copy file (M1.09).
+/// Everything Daytrack keeps. Stored and copied through `CopyFileCodec`.
 public struct Record: Hashable, Sendable {
     public var settings: Settings
     public var trackers: [Tracker]
@@ -15,9 +15,9 @@ public struct Record: Hashable, Sendable {
     }
 }
 
-public struct Settings: Hashable, Sendable {
+public struct Settings: Hashable, Codable, Sendable {
     /// An absolute local time of day (Q10).
-    public struct ReminderTime: Hashable, Sendable {
+    public struct ReminderTime: Hashable, Codable, Sendable {
         public var hour: Int
         public var minute: Int
 
