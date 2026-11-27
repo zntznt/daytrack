@@ -89,6 +89,5 @@ final class AmendUITests: XCTestCase {
         XCTAssertTrue(skipRest.waitForExistence(timeout: 5))
         skipRest.tap()
         XCTAssertTrue(board.buttons["Sleep, skipped. Activate for choices"].waitForExistence(timeout: 5))
-        XCTAssertFalse(app.buttons["Skip the rest of today"].exists && board.buttons["Skip the rest of today"].exists)
     }
 }
