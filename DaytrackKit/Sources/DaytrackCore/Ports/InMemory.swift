@@ -14,6 +14,10 @@ public final class InMemoryRecordStore: RecordStore, @unchecked Sendable {
     public func save(_ record: Record) throws {
         lock.withLock { self.record = record }
     }
+
+    public func eraseAll() throws {
+        lock.withLock { record = nil }
+    }
 }
 
 public final class InMemoryDeviceStateStore: DeviceStateStore, @unchecked Sendable {

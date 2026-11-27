@@ -4,6 +4,7 @@ import SwiftUI
 /// Wires Settings to `SettingsService`. Lowering the lock hour below now waits for a confirm (Q1).
 struct SettingsContainer: View {
     let state: AppState
+    let onErased: () -> Void
     @State private var pendingHour: Int?
 
     var body: some View {
@@ -19,6 +20,9 @@ struct SettingsContainer: View {
                          pendingHour = nil
                      },
                      onCancelLower: { pendingHour = nil },
-                     dataRows: { SaveCopyContainer(state: state) })
+                     dataRows: {
+                         SaveCopyContainer(state: state)
+                         EraseContainer(state: state, onErased: onErased)
+                     })
     }
 }

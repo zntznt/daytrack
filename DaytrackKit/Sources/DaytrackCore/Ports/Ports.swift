@@ -11,6 +11,13 @@ public enum LoadResult: Hashable, Sendable {
 public protocol RecordStore: Sendable {
     func load() throws -> LoadResult
     func save(_ record: Record) throws
+    /// Deletes everything this store keeps, moved-aside unreadable copies included. Afterwards `load()` is `.empty`.
+    func eraseAll() throws
+}
+
+extension RecordStore {
+    /// A wrapper with no files of its own cannot erase; erase through the store it wraps.
+    public func eraseAll() throws { throw CocoaError(.featureUnsupported) }
 }
 
 public protocol DeviceStateStore: Sendable {

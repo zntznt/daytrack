@@ -3,6 +3,8 @@ import SwiftUI
 
 struct RootView: View {
     let state: AppState
+    /// Set by Erase; "Start again" clears it and the empty record routes to onboarding.
+    @State private var erased = false
 
     var body: some View {
         #if DEBUG
@@ -17,13 +19,17 @@ struct RootView: View {
     }
 
     @ViewBuilder private var routed: some View {
-        switch state.route {
-        case .onboarding:
-            OnboardingContainer(trackers: state.trackers)
-        case .tabs:
-            TabsView(state: state, tab: state.env.screen == "settings" ? .settings : .today)
-        case .unreadable(let keptAt):
-            UnreadableView(keptAt: keptAt, onContinue: state.continueFromUnreadable)
+        if erased {
+            ErasedView(noOtherCopy: Copy.eraseNoOtherCopy, onStartAgain: { erased = false })
+        } else {
+            switch state.route {
+            case .onboarding:
+                OnboardingContainer(trackers: state.trackers)
+            case .tabs:
+                TabsView(state: state, tab: state.env.screen == "settings" ? .settings : .today, onErased: { erased = true })
+            case .unreadable(let keptAt):
+                UnreadableView(keptAt: keptAt, onContinue: state.continueFromUnreadable)
+            }
         }
     }
 }
@@ -34,6 +40,7 @@ struct TabsView: View {
 
     let state: AppState
     @State var tab: Tab
+    let onErased: () -> Void
 
     var body: some View {
         TabView(selection: $tab) {
@@ -42,7 +49,7 @@ struct TabsView: View {
                 TodayContainer(state: state, onBringBack: { tab = .settings })
             }
             SwiftUI.Tab("Settings", systemImage: "gearshape", value: Tab.settings) {
-                SettingsContainer(state: state)
+                SettingsContainer(state: state, onErased: onErased)
             }
         }
     }
