@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Settings: Trackers, Day, Data, then the version (HANDOFF §3, Q7a). Plain values and closures only.
-struct SettingsView: View {
+struct SettingsView<DataRows: View>: View {
     /// Each hour 0–23 with its derived label (`Copy.settingsLockHour`).
     let hours: [(hour: Int, label: String)]
     let lockHour: Int
@@ -10,6 +10,7 @@ struct SettingsView: View {
     let onPickLockHour: (Int) -> Void
     let onConfirmLower: () -> Void
     let onCancelLower: () -> Void
+    @ViewBuilder let dataRows: DataRows
 
     var body: some View {
         NavigationStack {
@@ -26,7 +27,7 @@ struct SettingsView: View {
                     .pickerStyle(.navigationLink)
                     .accessibilityIdentifier("settings.lockHour")
                 }
-                Section("Data") {} // M3.11 fills it.
+                Section("Data") { dataRows }
                 Section {
                     LabeledContent("Version") { Text(verbatim: version) }
                         .accessibilityIdentifier("settings.version")

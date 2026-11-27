@@ -78,6 +78,9 @@ public enum Copy {
         return "Last full copy: \(format(at, "d MMM", timeZone: timeZone, locale: locale)) (\(when))"
     }
 
+    /// Under the button after the exporter closed without saving (HANDOFF §8: "Cancel is a no-op and says so").
+    public static let fullCopyNotSaved = "Not saved. Nothing changed."
+
     // MARK: Helpers
 
     /// "Fri 20:00": locale weekday abbreviation, 24-hour time of the real instant (a DST gap shows the hour it lands on).

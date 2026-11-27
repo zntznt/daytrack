@@ -12,6 +12,8 @@ struct LaunchOverrides {
     var seed: String?
     var lockHour: Int?
     var screen: String?
+    /// A path, absolute or under tmp/.
+    var exportTo: String?
 
     init(arguments: [String]) {
         func value(_ flag: String) -> String? {
@@ -35,12 +37,14 @@ struct LaunchOverrides {
         store = value("-uiTestStore")
         seed = value("-uiTestSeed")
         screen = value("-uiTestScreen")
+        exportTo = value("-uiTestExportTo")
     }
 
     /// The live environment with each given override applied. A seed only fills an empty store, so relaunches keep their files.
     func environment() throws -> AppEnvironment {
         var env = AppEnvironment.live()
         env.screen = screen
+        env.exportTo = exportTo.map { URL(fileURLWithPath: $0, isDirectory: true, relativeTo: FileManager.default.temporaryDirectory) }
         if let timeZone { env.timeZone = timeZone }
         if let now { env.clock = OffsetClock(start: now) }
         switch store {

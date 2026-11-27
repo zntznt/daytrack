@@ -12,6 +12,11 @@ struct AppEnvironment {
     var widget: WidgetPublishing = NoWidget()
     /// Set only by `-uiTestScreen` in DEBUG.
     var screen: String?
+    /// Set only by `-uiTestExportTo` in DEBUG: a full copy is written here instead of through `.fileExporter`.
+    var exportTo: URL?
+
+    /// Export files live here only while their sheet is open (Q2, HANDOFF §8).
+    static let exportsDirectory = FileManager.default.temporaryDirectory.appendingPathComponent("Exports", isDirectory: true)
 
     /// File stores in `Application Support/Daytrack/`, the system clock and zone.
     static func live() -> AppEnvironment {
@@ -20,7 +25,9 @@ struct AppEnvironment {
                               clock: SystemClock(), timeZone: .autoupdatingCurrent)
     }
 
+    /// Purges `tmp/Exports/` first, so no copy outlives a crash or a kill with a sheet open.
     static func launch() -> AppEnvironment {
+        try? FileManager.default.removeItem(at: exportsDirectory)
         #if DEBUG
         return try! LaunchOverrides(arguments: ProcessInfo.processInfo.arguments).environment()
         #else
