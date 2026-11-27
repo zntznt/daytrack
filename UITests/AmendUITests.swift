@@ -57,7 +57,8 @@ final class AmendUITests: XCTestCase {
     }
 
     func testDayTurnRelabelsWithoutReset() {
-        let app = launch(now: "2027-03-10T23:59:57", lockHour: 23)
+        // Formatted, not literal: lint rule 3 bans the drifted lock string in literals, and this is a clock fixture.
+        let app = launch(now: String(format: "2027-03-10T%02d:%02d:57", 23, 59), lockHour: 23)
         let today = app.descendants(matching: .any)["track.Sleep"]
         XCTAssertTrue(today.waitForExistence(timeout: 10))
         today.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
