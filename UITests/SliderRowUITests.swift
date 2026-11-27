@@ -51,4 +51,18 @@ final class SliderRowUITests: XCTestCase {
         button.tap()
         XCTAssertEqual(anxiety.value as? String, "Mild")
     }
+
+    func testRowIsAtMost72ptTall() {
+        let app = launchRows()
+        // The row container's frame is the union of the label, the track and the value button.
+        let row = app.descendants(matching: .any).matching(identifier: "row.Anxiety").firstMatch
+        let anxiety = track(app, "Anxiety")
+        let button = app.buttons["Anxiety, Mild. Activate for choices"]
+        XCTAssertTrue(row.exists)
+        let union = row.frame.union(anxiety.frame).union(button.frame)
+        XCTAssertLessThanOrEqual(union.height, 72)
+        XCTAssertGreaterThanOrEqual(anxiety.frame.height, 44)
+        XCTAssertGreaterThanOrEqual(button.frame.height, 44)
+        XCTAssertGreaterThanOrEqual(button.frame.width, 58)
+    }
 }
