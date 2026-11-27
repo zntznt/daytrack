@@ -20,6 +20,7 @@ struct SettingsContainer: View {
                          pendingHour = nil
                      },
                      onCancelLower: { pendingHour = nil },
+                     reminderRows: { ReminderSettingsContainer(state: state) },
                      dataRows: {
                          SaveCopyContainer(state: state)
                          EraseContainer(state: state, onErased: onErased)
