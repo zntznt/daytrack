@@ -21,8 +21,7 @@ struct RootView: View {
         case .onboarding:
             OnboardingContainer(trackers: state.trackers)
         case .tabs:
-            TabsView(today: LocalCalendar(timeZone: state.env.timeZone).dayKey(for: state.env.clock.now),
-                     tab: state.env.screen == "settings" ? .settings : .today)
+            TabsView(state: state, tab: state.env.screen == "settings" ? .settings : .today)
         case .unreadable(let keptAt):
             UnreadableView(keptAt: keptAt, onContinue: state.continueFromUnreadable)
         }
@@ -33,13 +32,14 @@ struct RootView: View {
 struct TabsView: View {
     enum Tab: Hashable { case today, settings }
 
-    let today: DayKey
+    let state: AppState
     @State var tab: Tab
 
     var body: some View {
         TabView(selection: $tab) {
             SwiftUI.Tab("Today", systemImage: "sun.max", value: Tab.today) {
-                Text(verbatim: today.isoString) // placeholder until M3.07
+                // "Bring one back" goes to Settings › Trackers; Settings is a placeholder until M3.15.
+                TodayContainer(state: state, onBringBack: { tab = .settings })
             }
             SwiftUI.Tab("Settings", systemImage: "gearshape", value: Tab.settings) {
                 Text("Settings") // placeholder until M3.10
