@@ -22,7 +22,7 @@ enum Tokens {
 
     static let textHierarchy: [Color] = [text, textSecondary, textFaint]
     static let all: [(name: String, color: Color)] = [
-        ("accent", accent), ("background", background), ("surface", surface), ("surfaceRaised", surfaceRaised),
+        ("accent", accent), ("background", background), ("surface", surface),
         ("text", text), ("textSecondary", textSecondary), ("textFaint", textFaint),
     ]
 }
