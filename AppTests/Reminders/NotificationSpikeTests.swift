@@ -23,6 +23,14 @@ import UserNotifications
         await center.pendingNotificationRequests().filter { $0.identifier.hasPrefix("spike-") }
     }
 
+    /// Provisional authorization never prompts, so a hosted unit test can add requests.
+    /// Unauthorized, `add` throws UNErrorDomain 2003 "Source is not authorized".
+    init() async throws {
+        let status = await center.notificationSettings().authorizationStatus
+        if status == .notDetermined { _ = try await center.requestAuthorization(options: [.alert, .provisional]) }
+        print("spike: authorization", status.rawValue, "->", await center.notificationSettings().authorizationStatus.rawValue)
+    }
+
     private func clear() async {
         center.removePendingNotificationRequests(withIdentifiers: await spikePending().map(\.identifier))
     }
