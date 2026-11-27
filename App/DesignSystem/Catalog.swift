@@ -32,10 +32,14 @@ struct CatalogView: View {
                     .padding(16)
                     .glassSurface(radius: Radius.card)
                     .accessibilityIdentifier("glassStyle")
+                // A column, so no chip truncates at the largest text sizes.
                 GlassGroup {
-                    ViewThatFits {
-                        HStack(spacing: 8) { chipViews }
-                        VStack(alignment: .leading, spacing: 8) { chipViews }
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(chips, id: \.self) { name in
+                            Chip(title: name, isSelected: picked.contains(name)) {
+                                if picked.contains(name) { picked.remove(name) } else { picked.insert(name) }
+                            }
+                        }
                     }
                 }
                 PrimaryButton(title: "Start", action: {})
@@ -45,14 +49,6 @@ struct CatalogView: View {
             .padding(.top, 26)
         }
         .background { AmbientBackground() }
-    }
-
-    private var chipViews: some View {
-        ForEach(chips, id: \.self) { name in
-            Chip(title: name, isSelected: picked.contains(name)) {
-                if picked.contains(name) { picked.remove(name) } else { picked.insert(name) }
-            }
-        }
     }
 }
 #endif
