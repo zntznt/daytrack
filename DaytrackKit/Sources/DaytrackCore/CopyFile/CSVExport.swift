@@ -21,7 +21,9 @@ public enum CSVExport {
         }
     }
 
-    private static func field(_ s: String) -> String {
+    private static func field(_ raw: String) -> String {
+        // A leading =, +, -, @, tab or CR makes spreadsheets evaluate the cell as a formula.
+        let s = raw.first.map({ "=+-@\t\r".contains($0) }) == true ? "'" + raw : raw
         guard s.contains(where: { ",\"\n\r".contains($0) }) else { return s }
         return "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\""
     }
