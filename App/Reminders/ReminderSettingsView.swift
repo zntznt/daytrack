@@ -14,14 +14,14 @@ struct ReminderSettingsView: View {
         Toggle("Daily reminder", isOn: Binding(get: { isOn }, set: onToggle))
             .disabled(isDenied)
             .accessibilityIdentifier("settings.reminder")
-        DatePicker("At", selection: Binding(get: { time }, set: onPickTime), displayedComponents: .hourAndMinute)
-            // 24-hour, like every time in the app's copy.
-            .environment(\.locale, Locale(identifier: "en_GB"))
-            .environment(\.timeZone, .gmt)
-            .accessibilityIdentifier("settings.reminderTime")
         if isDenied {
             Text(verbatim: ReminderSettingsModel.deniedLine).accessibilityIdentifier("settings.reminderDenied")
         } else if isOn {
+            DatePicker("At", selection: Binding(get: { time }, set: onPickTime), displayedComponents: .hourAndMinute)
+                // 24-hour, like every time in the app's copy.
+                .environment(\.locale, Locale(identifier: "en_GB"))
+                .environment(\.timeZone, .gmt)
+                .accessibilityIdentifier("settings.reminderTime")
             Text(verbatim: scheduledLine).accessibilityIdentifier("settings.reminderScheduled")
             if nothingTonight { Text("Nothing arrives tonight") }
             Text(verbatim: horizonLine).font(.footnote)
