@@ -53,16 +53,14 @@ struct StarterPickerView: View {
         return Button { onToggle(starter) } label: {
             HStack(spacing: 13) {
                 Image(systemName: on ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(on ? Tokens.accent : Tokens.textFaint).font(.title3)
-                Image(systemName: starter.symbol).foregroundStyle(Tokens.textSecondary).frame(width: 22)
+                    .foregroundStyle(on ? Tokens.accent : Tokens.textFaint).font(.title3).accessibilityHidden(true)
+                Image(systemName: starter.symbol).foregroundStyle(Tokens.textSecondary).frame(width: 22).accessibilityHidden(true)
                 Text(starter.name).typography(.rowLabel).foregroundStyle(Tokens.text)
                 Spacer()
             }
             .frame(minHeight: 56).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(starter.name)
         .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
     }
 }
