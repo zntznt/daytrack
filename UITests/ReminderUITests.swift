@@ -59,8 +59,8 @@ final class ReminderUITests: XCTestCase {
     func testExplainerShowsChosenTime() {
         let app = launch(settings: true)
         XCTAssertEqual(reminderToggle(app).value as? String, "0")
-        // The switch sits at the trailing end of its row.
-        reminderToggle(app).coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+        // Tap the switch itself: a fixed offset into the row lands past its edge on narrower phones (17e).
+        reminderToggle(app).switches.firstMatch.tap()
         XCTAssertTrue(app.staticTexts["settings.reminderScheduled"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["Nothing arrives tonight"].exists)
         // Not the default: a hard-coded 21:30 or 21:00 fails here (design-review Medium 15).
