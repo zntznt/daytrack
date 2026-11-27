@@ -25,4 +25,7 @@ if [[ -z $ID ]]; then echo "scripts/mac: no block id from rex (exit $RC): $OUT" 
 mkdir -p .verify
 rex -S Thunderbolt capture -s daytrack -b "$ID" --trim --unwrap > .verify/last.log
 tail -n 60 .verify/last.log
+# Close the window once captured: the Mac session caps at 64 windows.
+WID=$(jq -r '.window_id // empty' <<<"$OUT" 2>/dev/null)
+[[ -n $WID ]] && rex -S Thunderbolt window close -s daytrack "$WID" >/dev/null 2>&1
 exit "$RC"
