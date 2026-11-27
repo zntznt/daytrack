@@ -113,8 +113,10 @@ final class TodayBoardUITests: XCTestCase {
 
     func testDotStripClearOfFirstRow() {
         let app = launch("eightTrackers")
-        let row = app.descendants(matching: .any)["row.Sleep"]
-        XCTAssertTrue(row.waitForExistence(timeout: 5))
-        XCTAssertGreaterThanOrEqual(row.frame.minY - dotStrip(app).frame.maxY, 15.5)
+        let first = track(app, "Sleep")
+        XCTAssertTrue(first.waitForExistence(timeout: 5))
+        // The row's name line (about 18pt) and its 4pt gap sit above the track, so 16pt clear of the row
+        // means at least 16 + 22 from the strip to the track.
+        XCTAssertGreaterThanOrEqual(first.frame.minY - dotStrip(app).frame.maxY, 16 + 22)
     }
 }
