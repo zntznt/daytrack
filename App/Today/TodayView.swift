@@ -3,20 +3,17 @@ import SwiftUI
 
 /// The board (HANDOFF §3 Today). Plain content rows, no glass; system buttons only.
 struct TodayView: View {
-    let dayName: String
-    /// The day as "YYYY-MM-DD", the day name's accessibility identifier.
-    let dayID: String
+    /// `dayID` is the day as "YYYY-MM-DD", the day name's accessibility identifier.
+    let dayName: String, dayID: String
     let rows: [RowState]
     let dotStripLabel: String
-    let isBoardEmpty: Bool
-    let isDayOne: Bool
+    let isBoardEmpty: Bool, isDayOne: Bool
     /// nil hides the day action.
     let skipRestTitle: String?
     let onCommit: (Tracker, DayValue?) -> Void
     let onOpenPad: (Tracker) -> Void
     let onDraggingChanged: (Bool) -> Void
-    let onSkipRest: () -> Void
-    let onBringBack: () -> Void
+    let onSkipRest: () -> Void, onBringBack: () -> Void
 
     var body: some View {
         ScrollView {

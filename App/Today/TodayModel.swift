@@ -16,17 +16,11 @@ final class TodayModel {
     let day: DayKey
 
     @ObservationIgnored var isDragging = false {
-        didSet {
-            guard !isDragging, let held else { return }
-            self.held = nil
-            receive(held)
-        }
+        didSet { if !isDragging, let held { self.held = nil; receive(held) } }
     }
 
     init(recorder: Recorder, clock: Clock, tz: TimeZone) {
-        self.recorder = recorder
-        self.clock = clock
-        self.tz = tz
+        (self.recorder, self.clock, self.tz) = (recorder, clock, tz)
         record = recorder.record
         day = LocalCalendar(timeZone: tz).dayKey(for: clock.now)
     }
@@ -35,8 +29,6 @@ final class TodayModel {
     func receive(_ next: Record) {
         if isDragging { held = next } else { record = next }
     }
-
-    // MARK: Board
 
     /// One row per tracker active today, in roster order.
     var rows: [RowState] {
@@ -50,18 +42,15 @@ final class TodayModel {
     }
 
     var counts: RowCounts { RowCounts(entry: record.entries[day], day: day, trackers: record.trackers) }
-
     /// HANDOFF §9 boardEmpty: every tracker is archived.
     var isBoardEmpty: Bool { record.trackers.allSatisfy(\.isArchived) }
-
     /// Nothing has ever been written.
     var isDayOne: Bool { record.entries.isEmpty }
-
     var isOpen: Bool {
         let s = record.settings
-        switch DayClosing.status(of: day, now: clock.now, lockHour: s.lockHour, closedThrough: s.closedThrough, tz: tz) {
-        case .today, .yesterdayOpen: return true
-        case .closed, .future: return false
+        return switch DayClosing.status(of: day, now: clock.now, lockHour: s.lockHour, closedThrough: s.closedThrough, tz: tz) {
+        case .today, .yesterdayOpen: true
+        case .closed, .future: false
         }
     }
 
@@ -77,8 +66,6 @@ final class TodayModel {
         guard isOpen, counts.blank > 0, let label = Copy.dayLabel(for: day, now: clock.now, timeZone: tz) else { return nil }
         return Copy.skipRest(dayLabel: label)
     }
-
-    // MARK: Writes
 
     /// Writes `value` (nil clears to blank) through `Recorder`.
     func commit(_ value: DayValue?, to tracker: Tracker) {

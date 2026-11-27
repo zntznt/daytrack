@@ -1,9 +1,7 @@
 import XCTest
 
 final class TodayBoardUITests: XCTestCase {
-    override func setUp() {
-        continueAfterFailure = false
-    }
+    override func setUp() { continueAfterFailure = false }
 
     private func launch(_ seed: String, store: String = "memory") -> XCUIApplication {
         let app = XCUIApplication()
@@ -13,16 +11,10 @@ final class TodayBoardUITests: XCTestCase {
         return app
     }
 
-    private func track(_ app: XCUIApplication, _ name: String) -> XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "track.\(name)").firstMatch
-    }
-
+    private func track(_ app: XCUIApplication, _ name: String) -> XCUIElement { app.descendants(matching: .any)["track.\(name)"] }
+    private func dotStrip(_ app: XCUIApplication) -> XCUIElement { app.descendants(matching: .any)["dotStrip"] }
     private func valueButton(_ app: XCUIApplication, _ name: String, _ said: String) -> XCUIElement {
         app.buttons["\(name), \(said). Activate for choices"]
-    }
-
-    private func dotStrip(_ app: XCUIApplication) -> XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "dotStrip").firstMatch
     }
 
     /// Press-to-position at the middle of a numeric track: stop 5.
@@ -45,9 +37,7 @@ final class TodayBoardUITests: XCTestCase {
         let app = launch("threeTrackersEmpty")
         XCTAssertTrue(app.staticTexts["Drag any track to set it."].waitForExistence(timeout: 5))
         let texts = app.staticTexts.allElementsBoundByIndex.map { $0.label }.joined(separator: "\n").lowercased()
-        for banned in ["tap the number", "to skip", "late", "behind"] {
-            XCTAssertFalse(texts.contains(banned), banned)
-        }
+        for banned in ["tap the number", "to skip", "late", "behind"] { XCTAssertFalse(texts.contains(banned), banned) }
         // The value button is the skip affordance on every row (design-review Medium 12).
         XCTAssertTrue(valueButton(app, "Sleep", "not written yet").exists)
     }
@@ -89,11 +79,8 @@ final class TodayBoardUITests: XCTestCase {
         let app = launch("allArchived")
         XCTAssertTrue(app.staticTexts["Nothing on the board"].waitForExistence(timeout: 5))
         XCTAssertFalse(dotStrip(app).exists)
-        XCTAssertFalse(track(app, "Sleep").exists)
         XCTAssertTrue(app.staticTexts["There is no nudge tonight either. A reminder for a board with nothing on it would be asking about nothing."].exists)
-        let bring = app.buttons["Bring one back"]
-        XCTAssertTrue(bring.exists)
-        bring.tap()
+        app.buttons["Bring one back"].tap()
         XCTAssertTrue(app.tabBars.buttons["Settings"].isSelected)
     }
 

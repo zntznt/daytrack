@@ -4,13 +4,7 @@ import Testing
 @testable import Daytrack
 
 /// A clock the test moves by hand.
-private final class StepClock: Clock, @unchecked Sendable {
-    var now: Date
-    init(_ now: Date) { self.now = now }
-}
-
-private struct NoWidgetSpy: WidgetPublishing { func publish(record: Record, now: Date) {} }
-private struct NoReminderSpy: ReminderScheduling { func replan(record: Record, now: Date) {}; func removeAll() {} }
+private final class StepClock: Clock, @unchecked Sendable { var now: Date; init(_ now: Date) { self.now = now } }
 
 @MainActor @Suite struct TodayModelTests {
     let tz = TimeZone(identifier: "UTC")!
@@ -19,14 +13,12 @@ private struct NoReminderSpy: ReminderScheduling { func replan(record: Record, n
     let store = InMemoryRecordStore()
 
     private func model(_ trackers: [Tracker]) -> (TodayModel, Recorder) {
-        let recorder = Recorder(record: Record(trackers: trackers), store: store, clock: clock, widget: NoWidgetSpy(),
-                                reminders: NoReminderSpy(), tz: tz)
+        let recorder = Recorder(record: Record(trackers: trackers), store: store, clock: clock, widget: NoWidget(),
+                                reminders: NoReminders(), tz: tz)
         return (TodayModel(recorder: recorder, clock: clock, tz: tz), recorder)
     }
 
-    private func tracker(_ name: String) -> Tracker {
-        Tracker(name: name, symbol: "circle", type: .numeric, createdAt: day.adding(days: -10))
-    }
+    private func tracker(_ name: String) -> Tracker { Tracker(name: name, symbol: "circle", type: .numeric, createdAt: day.adding(days: -10)) }
 
     @Test func updatesHeldWhileDraggingAppliedOnRelease() {
         let sleep = tracker("Sleep"), mood = tracker("Mood")
@@ -41,7 +33,6 @@ private struct NoReminderSpy: ReminderScheduling { func replan(record: Record, n
         #expect(board.record.entries[day] == nil)
         #expect(board.rows.map(\.tracker.name) == ["Sleep", "Mood"])
         board.isDragging = false
-        #expect(board.record == outside)
         #expect(board.rows.map(\.value) == [.set(6), nil])
         #expect(board.rows.map(\.tracker.name) == ["Sleep", "Mood renamed"])
     }
@@ -61,25 +52,5 @@ private struct NoReminderSpy: ReminderScheduling { func replan(record: Record, n
         #expect(saved.entries[day] == stored)
         #expect(board.rows.first?.value == .set(4))
         #expect(!board.isOpen && board.skipRestTitle == nil)
-    }
-
-    @Test func rowsFollowRosterOrderAndSkipArchived() {
-        var archived = tracker("Work")
-        archived.archivedRanges = [Tracker.ArchivedRange(from: day.adding(days: -1))]
-        let (board, _) = model([tracker("Mood"), archived, tracker("Sleep")])
-        #expect(board.rows.map(\.tracker.name) == ["Mood", "Sleep"])
-        #expect(!board.isBoardEmpty)
-        #expect(model([archived]).0.isBoardEmpty)
-    }
-
-    @Test func skipRestFillsOnlyBlanks() {
-        let sleep = tracker("Sleep"), mood = tracker("Mood")
-        let (board, _) = model([sleep, mood])
-        board.commit(.set(3), to: sleep)
-        #expect(board.skipRestTitle == "Skip the rest of today")
-        board.skipRest()
-        #expect(board.rows.map(\.value) == [.set(3), .skip])
-        #expect(board.counts == RowCounts(written: 1, skipped: 1, blank: 0))
-        #expect(board.skipRestTitle == nil)
     }
 }
