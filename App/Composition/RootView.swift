@@ -5,6 +5,22 @@ struct RootView: View {
     let state: AppState
 
     var body: some View {
+        Group {
+            #if DEBUG
+            if let screen = state.env.screen, screen != "settings" {
+                DebugScreens.view(for: screen)
+            } else {
+                routed
+            }
+            #else
+            routed
+            #endif
+        }
+        // The palette is dark-only; light glass would put amber text on a light surface.
+        .preferredColorScheme(.dark)
+    }
+
+    @ViewBuilder private var routed: some View {
         switch state.route {
         case .onboarding:
             Text("Daytrack") // placeholder until M3.03

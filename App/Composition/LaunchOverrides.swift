@@ -12,6 +12,12 @@ struct LaunchOverrides {
     var seed: String?
     var lockHour: Int?
     var screen: String?
+    var legibility: Legibility?
+
+    enum Legibility: String { case reduceTransparency, increaseContrast }
+
+    /// Read once from this process's arguments; `GlassStyle` applies it.
+    static let legibility = LaunchOverrides(arguments: ProcessInfo.processInfo.arguments).legibility
 
     init(arguments: [String]) {
         func value(_ flag: String) -> String? {
@@ -31,6 +37,10 @@ struct LaunchOverrides {
         if let text = value("-uiTestLockHour") {
             guard let hour = Int(text), (0...23).contains(hour) else { preconditionFailure("-uiTestLockHour wants 0-23, got \(text)") }
             lockHour = hour
+        }
+        if let text = value("-uiTestLegibility") {
+            guard let forced = Legibility(rawValue: text) else { preconditionFailure("-uiTestLegibility wants reduceTransparency or increaseContrast, got \(text)") }
+            legibility = forced
         }
         store = value("-uiTestStore")
         seed = value("-uiTestSeed")
