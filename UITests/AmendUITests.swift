@@ -58,13 +58,14 @@ final class AmendUITests: XCTestCase {
 
     func testDayTurnRelabelsWithoutReset() {
         // Formatted, not literal: lint rule 3 bans the drifted lock string in literals, and this is a clock fixture.
-        let app = launch(now: String(format: "2027-03-10T%02d:%02d:57", 23, 59), lockHour: 23)
+        // 20 s before midnight: launch plus the first tap take about 6 s on the simulator.
+        let app = launch(now: String(format: "2027-03-10T%02d:%02d:40", 23, 59), lockHour: 23)
         let today = app.descendants(matching: .any)["track.Sleep"]
         XCTAssertTrue(today.waitForExistence(timeout: 10))
         today.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.descendants(matching: .any)["2027-03-10"].exists)
         // Past midnight: Today relabels to the new day and the value stays on its own date, now yesterday.
-        XCTAssertTrue(app.descendants(matching: .any)["2027-03-11"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.descendants(matching: .any)["2027-03-11"].waitForExistence(timeout: 30))
         let board = openAmend(app)
         XCTAssertTrue(board.descendants(matching: .any)["2027-03-10"].exists)
         XCTAssertEqual(track(board, "Sleep").value as? String, "5")
