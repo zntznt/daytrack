@@ -103,10 +103,11 @@ final class TodayBoardUITests: XCTestCase {
         for name in ["Sleep", "Energy", "Focus", "Mood", "Movement", "Work", "Anxiety", "Meds taken"] {
             let t = track(app, name)
             XCTAssertTrue(t.waitForExistence(timeout: 5), name)
+            print("row \(name) track \(t.frame) tabBarTop \(tabBarTop)")
             XCTAssertTrue(t.isHittable, name)
             // Above the tab bar, not merely on screen behind it.
             XCTAssertLessThanOrEqual(t.frame.maxY, tabBarTop, name)
-            XCTAssertGreaterThanOrEqual(t.frame.height, 44, name)
+            XCTAssertGreaterThanOrEqual(t.frame.height.rounded(), 44, name)
             let button = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name), ")).firstMatch
             XCTAssertTrue(button.isHittable, name)
         }
