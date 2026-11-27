@@ -104,3 +104,22 @@ private func isExcluded(_ directory: URL) throws -> Bool {
         #expect(Set(try FileManager.default.contentsOfDirectory(atPath: directory.path)) == ["record.json", "device.json"])
     }
 }
+
+extension FileRecordStoreTests {
+    @Test func eraseAllRemovesUnreadableCopies() throws {
+        let directory = tempDirectory()
+        let store = FileRecordStore(directory: directory)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try Data("{ not a record".utf8).write(to: store.fileURL)
+        guard case .unreadable = try store.load() else { Issue.record("not reported unreadable"); return }
+        try store.save(sample)
+        try FileDeviceStateStore(directory: directory).save(DeviceState(lastFullCopyAt: Date(timeIntervalSinceReferenceDate: 1)))
+        let unrelated = directory.appendingPathComponent("notes.txt")
+        try Data("not ours to judge".utf8).write(to: unrelated)
+
+        try store.eraseAll()
+        #expect(try FileManager.default.contentsOfDirectory(atPath: directory.path) == ["notes.txt"])
+        #expect(try store.load() == .empty)
+        #expect(try FileDeviceStateStore(directory: directory).load() == DeviceState())
+    }
+}

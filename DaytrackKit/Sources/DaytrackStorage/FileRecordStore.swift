@@ -25,6 +25,14 @@ public struct FileRecordStore: RecordStore {
         try StoreFile.write(try CopyFileCodec.encode(record), to: fileURL)
     }
 
+    /// `record.json`, `device.json` and every `record-unreadable-*.json`: a kept copy would make the Erase copy false (M3.12).
+    public func eraseAll() throws {
+        guard let names = try? FileManager.default.contentsOfDirectory(atPath: directory.path) else { return }
+        for name in names where name == "record.json" || name == "device.json" || name.hasPrefix("record-unreadable-") {
+            try FileManager.default.removeItem(at: directory.appendingPathComponent(name))
+        }
+    }
+
     static func decode(_ data: Data) -> Record? {
         switch CopyFileCodec.decode(data) {
         case .copy(let record): record
