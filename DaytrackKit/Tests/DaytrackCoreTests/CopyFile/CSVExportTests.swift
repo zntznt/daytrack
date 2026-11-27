@@ -29,4 +29,11 @@ import Testing
         #expect(csv.contains("date,'=SUM(1)"))
         #expect(!csv.contains(",=SUM(1)"))
     }
+
+    @Test func csvQuotesCRLFAndSpacedFormulas() {
+        let a = Tracker(name: "a\r\nb", symbol: "bandage", type: .numeric, createdAt: DayKey("2027-07-01")!)
+        let b = Tracker(name: " =1+1", symbol: "bandage", type: .numeric, createdAt: DayKey("2027-07-01")!)
+        let csv = CSVExport.csv(Record(trackers: [a, b]))
+        #expect(csv.contains("date,\"a\r\nb\",' =1+1"))
+    }
 }
