@@ -30,4 +30,16 @@ final class SaveCopyUITests: XCTestCase {
         XCTAssertTrue(factLine(app).wait(for: \.label, toEqual: "Last full copy: 10 Mar (today)", timeout: 5))
         XCTAssertFalse(app.staticTexts["settings.saveCopyNotSaved"].exists)
     }
+
+    /// The real exporter, not the direct write: it opens without crashing and cancels cleanly.
+    func testRealExporterOpensAndCancels() {
+        let app = launch()
+        _ = factLine(app)
+        app.buttons["settings.saveCopy"].tap()
+        let cancel = app.buttons["Cancel"]
+        XCTAssertTrue(cancel.waitForExistence(timeout: 10))
+        XCTAssertEqual(app.state, .runningForeground)
+        cancel.tap()
+        XCTAssertTrue(app.staticTexts["settings.saveCopyNotSaved"].waitForExistence(timeout: 5))
+    }
 }
