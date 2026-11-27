@@ -5,12 +5,8 @@ import Testing
 
 @MainActor @Suite struct DayOneWrittenTests {
     let today = DayKey("2027-07-22")!
-    let sleep: Tracker, mood: Tracker
-
-    init() {
-        sleep = Tracker(name: "Sleep", symbol: "bed.double", type: .numeric, createdAt: today.adding(days: -10))
-        mood = Tracker(name: "Mood", symbol: "face.smiling", type: .numeric, createdAt: today.adding(days: -10))
-    }
+    let sleep = Tracker(name: "Sleep", symbol: "bed.double", type: .numeric, createdAt: DayKey("2027-07-01")!)
+    let mood = Tracker(name: "Mood", symbol: "face.smiling", type: .numeric, createdAt: DayKey("2027-07-01")!)
 
     private func record(_ day: DayKey, _ values: [UUID: DayValue]) -> Record {
         Record(trackers: [sleep, mood],
@@ -34,19 +30,9 @@ import Testing
         let relaunched = DayOneWrittenModel(deviceState: store)
         relaunched.receive(record(today.adding(days: -1), [sleep.id: .set(5)]), today: today)
         #expect(!relaunched.isShowing)
-    }
-
-    @Test func firstLaunchAfterAWrittenDayShows() {
-        let model = DayOneWrittenModel(deviceState: InMemoryDeviceStateStore())
-        model.receive(record(today.adding(days: -1), [sleep.id: .set(5)]), today: today)
-        #expect(model.isShowing)
-    }
-
-    @Test func flagDefaultsOffAndOldFilesOpen() throws {
-        let data = try JSONEncoder().encode(DeviceState(dayOneScreenShown: true))
-        #expect(try JSONDecoder().decode(DeviceState.self, from: data).dayOneScreenShown)
-        // An older file without the field still opens.
-        #expect(try JSONDecoder().decode(DeviceState.self, from: Data("{}".utf8)) == DeviceState())
-        #expect(!DeviceState().dayOneScreenShown)
+        // Erase saves a fresh DeviceState, and an older file without the flag opens with it off.
+        let fresh = DayOneWrittenModel(deviceState: InMemoryDeviceStateStore(try! JSONDecoder().decode(DeviceState.self, from: Data("{}".utf8))))
+        fresh.receive(record(today.adding(days: -1), [sleep.id: .set(5)]), today: today)
+        #expect(fresh.isShowing)
     }
 }

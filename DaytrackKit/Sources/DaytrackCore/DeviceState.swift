@@ -17,8 +17,6 @@ public struct DeviceState: Hashable, Codable, Sendable {
         self.dayOneScreenShown = dayOneScreenShown
     }
 
-    private enum CodingKeys: String, CodingKey { case lastFullCopyAt, reportDraft, remindersScheduledThrough, dayOneScreenShown }
-
     /// A file saved before a field existed still opens, with that field at its default.
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)

@@ -4,23 +4,23 @@ import Observation
 import UserNotifications
 
 /// The reminder toggle and time (decisions Q10). On means a time is set and the phone allows notifications.
-/// Permission is asked only from `setOn(true)`, which runs on a tap in Settings or on the day-one-written screen.
+/// Permission is asked only from `setOn(true)`, on a tap in Settings or the day-one-written screen, and only while
+/// undetermined: the first answer stands, so a refusal is never re-prompted.
 @MainActor @Observable
 final class ReminderSettingsModel {
-    static let defaultTime = Settings.ReminderTime(hour: 21, minute: 30)
     static let deniedLine = "Notifications are off for Daytrack in system settings"
 
     @ObservationIgnored private let settings: SettingsService
-    @ObservationIgnored private let asker: PermissionAsker
+    @ObservationIgnored private let client: NotificationCenterClient
     @ObservationIgnored private let record: () -> Record
     @ObservationIgnored private let clock: Clock
     @ObservationIgnored private let tz: TimeZone
     private(set) var status = UNAuthorizationStatus.notDetermined
     /// The time while the reminder is off, so turning it on keeps the pick.
-    private var offTime = defaultTime
+    private var offTime = Settings.ReminderTime(hour: 21, minute: 30)
 
-    init(settings: SettingsService, asker: PermissionAsker, record: @escaping () -> Record, clock: Clock, tz: TimeZone) {
-        (self.settings, self.asker, self.record, self.clock, self.tz) = (settings, asker, record, clock, tz)
+    init(settings: SettingsService, client: NotificationCenterClient, record: @escaping () -> Record, clock: Clock, tz: TimeZone) {
+        (self.settings, self.client, self.record, self.clock, self.tz) = (settings, client, record, clock, tz)
     }
 
     var isOn: Bool { record().settings.reminderAt != nil && isAllowed }
@@ -39,7 +39,7 @@ final class ReminderSettingsModel {
 
     private var isAllowed: Bool { ![.notDetermined, .denied].contains(status) }
 
-    func refresh() async { status = await asker.client.authorizationStatus() }
+    func refresh() async { status = await client.authorizationStatus() }
 
     func setOn(_ on: Bool) async {
         guard on else {
@@ -47,9 +47,10 @@ final class ReminderSettingsModel {
             try? settings.setReminderAt(nil)
             return
         }
-        let allowed = await asker.allowed()
         await refresh()
-        if allowed { try? settings.setReminderAt(time) }
+        if status == .notDetermined { _ = try? await client.requestAuthorization() }
+        await refresh()
+        if isAllowed { try? settings.setReminderAt(time) }
     }
 
     func setTime(_ next: Settings.ReminderTime) {

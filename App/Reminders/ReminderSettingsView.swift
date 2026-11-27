@@ -2,15 +2,12 @@ import SwiftUI
 
 /// Settings' reminder rows (decisions Q10). Plain values and closures only.
 struct ReminderSettingsView: View {
-    let isOn: Bool
-    let isDenied: Bool
+    let isOn: Bool, isDenied: Bool
     /// The chosen time as a date on a fixed GMT day; only its hour and minute count.
     let time: Date
-    let scheduledLine: String
-    let horizonLine: String
+    let scheduledLine: String, horizonLine: String
     let nothingTonight: Bool
-    let onToggle: (Bool) -> Void
-    let onPickTime: (Date) -> Void
+    let onToggle: (Bool) -> Void, onPickTime: (Date) -> Void
 
     var body: some View {
         // A refusal is final here: the toggle stops asking and the line points to system settings.

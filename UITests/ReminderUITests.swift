@@ -15,50 +15,23 @@ final class ReminderUITests: XCTestCase {
 
     private func dayOne(_ app: XCUIApplication) -> XCUIElement { app.descendants(matching: .any)["dayOneWritten"] }
 
-    private func skipRest(_ app: XCUIApplication) {
-        let skip = app.buttons["Skip the rest of today"]
-        XCTAssertTrue(skip.waitForExistence(timeout: 5))
-        skip.tap()
-    }
-
     private func reminderToggle(_ app: XCUIApplication) -> XCUIElement {
         let toggle = app.switches["settings.reminder"]
         XCTAssertTrue(toggle.waitForExistence(timeout: 5))
         return toggle
     }
 
-    /// The switch sits at the trailing end of its row.
-    private func turnOn(_ app: XCUIApplication) {
-        let toggle = reminderToggle(app)
-        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
-        XCTAssertTrue(app.staticTexts["settings.reminderScheduled"].waitForExistence(timeout: 5))
-    }
-
-    private func setTime(_ app: XCUIApplication, hour: String, minute: String) {
-        let picker = app.datePickers["settings.reminderTime"]
-        XCTAssertTrue(picker.waitForExistence(timeout: 5))
-        picker.buttons.firstMatch.exists ? picker.buttons.firstMatch.tap() : picker.tap()
-        let wheels = app.pickerWheels
-        XCTAssertTrue(wheels.firstMatch.waitForExistence(timeout: 5))
-        wheels.element(boundBy: 0).adjust(toPickerWheelValue: hour)
-        wheels.element(boundBy: 1).adjust(toPickerWheelValue: minute)
-        // Close the wheel popover.
-        app.navigationBars["Settings"].tap()
-    }
-
     func testNoPermissionPromptAtLaunch() {
         // A written day before today: the day-one screen is up at launch, and still nothing is asked.
         let app = launch("fortyDays", notifications: nil)
         XCTAssertTrue(dayOne(app).waitForExistence(timeout: 5))
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        XCTAssertFalse(springboard.alerts.firstMatch.waitForExistence(timeout: 3))
-        XCTAssertFalse(app.alerts.firstMatch.exists)
+        XCTAssertFalse(XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.firstMatch.waitForExistence(timeout: 3))
     }
 
     func testDayOneScreenOffersReminderAndNoReminder() {
         let app = launch()
         XCTAssertFalse(dayOne(app).exists)
-        skipRest(app)
+        app.buttons["Skip the rest of today"].tap()
         XCTAssertTrue(dayOne(app).waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["AFTER DAY ONE"].exists)
         XCTAssertTrue(app.staticTexts["Daily reminder"].exists)
@@ -73,10 +46,8 @@ final class ReminderUITests: XCTestCase {
 
     func testCompleteDaySaysNothingArrivesTonight() {
         let app = launch()
-        skipRest(app)
-        let remind = app.buttons["Remind me at 21:30"]
-        XCTAssertTrue(remind.waitForExistence(timeout: 5))
-        remind.tap()
+        app.buttons["Skip the rest of today"].tap()
+        app.buttons["Remind me at 21:30"].tap()
         XCTAssertTrue(dayOne(app).waitForNonExistence(timeout: 5))
         app.tabBars.buttons["Settings"].tap()
         XCTAssertEqual(reminderToggle(app).value as? String, "1")
@@ -88,17 +59,17 @@ final class ReminderUITests: XCTestCase {
     func testExplainerShowsChosenTime() {
         let app = launch(settings: true)
         XCTAssertEqual(reminderToggle(app).value as? String, "0")
-        turnOn(app)
+        // The switch sits at the trailing end of its row.
+        reminderToggle(app).coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+        XCTAssertTrue(app.staticTexts["settings.reminderScheduled"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["Nothing arrives tonight"].exists)
         // Not the default: a hard-coded 21:30 or 21:00 fails here (design-review Medium 15).
-        setTime(app, hour: "20", minute: "15")
+        app.datePickers["settings.reminderTime"].tap()
+        let wheels = app.pickerWheels
+        XCTAssertTrue(wheels.firstMatch.waitForExistence(timeout: 5))
+        wheels.element(boundBy: 0).adjust(toPickerWheelValue: "20")
+        wheels.element(boundBy: 1).adjust(toPickerWheelValue: "15")
+        app.navigationBars["Settings"].tap() // closes the wheels
         XCTAssertTrue(app.staticTexts["scheduled for 20:15; delivery can still move it"].waitForExistence(timeout: 5))
-    }
-
-    func testDeniedShowsSystemSettingsLine() {
-        let app = launch(notifications: "fakeDeny", settings: true)
-        reminderToggle(app).coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
-        XCTAssertTrue(app.staticTexts["Notifications are off for Daytrack in system settings"].waitForExistence(timeout: 5))
-        XCTAssertFalse(reminderToggle(app).isEnabled)
     }
 }

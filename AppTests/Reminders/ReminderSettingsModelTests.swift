@@ -31,19 +31,18 @@ private final class CountingClient: NotificationCenterClient, @unchecked Sendabl
         let recorder = Recorder(record: Record(trackers: [sleep]), store: InMemoryRecordStore(), clock: clock, widget: NoWidget(),
                                 reminders: scheduler, tz: tz)
         let model = ReminderSettingsModel(settings: SettingsService(recorder: recorder, deviceState: deviceState),
-                                          asker: PermissionAsker(client: client), record: { recorder.record }, clock: clock, tz: tz)
+                                          client: client, record: { recorder.record }, clock: clock, tz: tz)
         return (model, client, scheduler, recorder)
     }
 
     @Test func toggleOnSchedulesWithChosenTime() async throws {
         let (model, client, scheduler, recorder) = make(grants: true)
         #expect(!model.isOn)
-        // Off, the default 21:30 is in the record but nothing was asked; pick 20:15 first.
+        // Picked while off: nothing is asked until the toggle.
         model.setTime(Settings.ReminderTime(hour: 20, minute: 15))
         await model.setOn(true)
         await scheduler.settled()
-        #expect(model.isOn)
-        #expect(recorder.record.settings.reminderAt == Settings.ReminderTime(hour: 20, minute: 15))
+        #expect(model.isOn && recorder.record.settings.reminderAt == Settings.ReminderTime(hour: 20, minute: 15))
         #expect(model.scheduledLine == "scheduled for 20:15; delivery can still move it")
         #expect(model.remindTitle == "Remind me at 20:15")
         let first = try #require(client.base.requests.first?.trigger as? UNCalendarNotificationTrigger)
@@ -58,8 +57,7 @@ private final class CountingClient: NotificationCenterClient, @unchecked Sendabl
         await model.setOn(false)
         #expect(!model.isOn)
         await model.setOn(true)
-        #expect(client.requests == 1)
-        #expect(model.isOn)
+        #expect(client.requests == 1 && model.isOn)
     }
 
     @Test func deniedShowsSystemSettingsLineNoReprompt() async {
@@ -68,7 +66,6 @@ private final class CountingClient: NotificationCenterClient, @unchecked Sendabl
         #expect(model.isDenied && !model.isOn)
         #expect(ReminderSettingsModel.deniedLine == "Notifications are off for Daytrack in system settings")
         await model.setOn(true)
-        #expect(client.requests == 1)
-        #expect(!model.isOn)
+        #expect(client.requests == 1 && !model.isOn)
     }
 }

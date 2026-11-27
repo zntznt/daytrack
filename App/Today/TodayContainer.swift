@@ -28,7 +28,6 @@ struct TodayContainer: View {
             .onAppear { ticker.refresh() }
             .onChange(of: phase) { if $1 == .active { ticker.refresh() } }
             .sheet(isPresented: $amending) { AmendContainer(state: state, onBringBack: { amending = false; onBringBack() }) }
-            // The model's record is held mid-drag, so the screen never appears under a finger.
             .onChange(of: model.record, initial: true) { dayOne.receive($1, today: model.day) }
             .safeAreaInset(edge: .bottom) {
                 if dayOne.isShowing {
