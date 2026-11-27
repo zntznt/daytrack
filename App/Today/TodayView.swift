@@ -14,10 +14,12 @@ struct TodayView: View {
     let amendChip: String?
     /// nil hides the day action.
     let skipRestTitle: String?
+    /// The day's note, or "Add a note"; nil hides the row.
+    let noteTeaser: String?
     let onCommit: (Tracker, DayValue?) -> Void
     let onOpenPad: (Tracker) -> Void
     let onDraggingChanged: (Bool) -> Void
-    let onSkipRest: () -> Void, onBringBack: () -> Void, onAmend: () -> Void
+    let onSkipRest: () -> Void, onBringBack: () -> Void, onAmend: () -> Void, onOpenNote: () -> Void
 
     var body: some View {
         ScrollView {
@@ -60,6 +62,15 @@ struct TodayView: View {
             Button(skipRestTitle, action: onSkipRest)
                 .buttonStyle(.glass)
                 .tint(Tokens.accent)
+        }
+        if let noteTeaser {
+            // Outside the disabled rows: a closed day's note still opens, read-only.
+            Button(action: onOpenNote) {
+                Label { Text(verbatim: noteTeaser).lineLimit(2) } icon: { Image(systemName: "square.and.pencil") }
+                    .typography(.body).foregroundStyle(Tokens.text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .accessibilityIdentifier("noteRow")
         }
     }
 }
