@@ -222,6 +222,7 @@ Tasks M0.01 and M0.02 come before done.sh exists, so each lists its own literal 
 | M3.04 | Row state model (pure gesture and label logic) | S | M3.01, M1.08 |
 | M3.05 | Slider row view | M | M3.04, M3.02 |
 | M3.06 | Choice pad | M | M3.05 |
+| M3.05b | Compact slider row so eight fit on one screen | S | M3.05, M3.06 |
 | M3.07 | Today board container | L | M3.06, M3.03 |
 | M3.08 | Day turn and Amend yesterday | M | M3.07 |
 | M3.09 | Note | S | M3.08 |
