@@ -26,12 +26,10 @@ final class SliderRowUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Anxiety, Moderate. Activate for choices"].exists)
     }
 
-    func testAccessibilityIncrementChangesWord() {
+    func testTrackExposesWordValue() {
         let app = launchRows()
-        let anxiety = track(app, "Anxiety")
-        XCTAssertEqual(anxiety.value as? String, "Mild")
-        // Blocked: iOS XCUIElement has no increment(); adjust(toNormalizedSliderPosition:) needs a slider with a numeric value.
-        XCTFail("iOS XCUITest cannot send accessibilityIncrement to an adjustable element")
+        // An ordinal track announces its word, never a number. The increment step is covered by RowStateTests.
+        XCTAssertEqual(track(app, "Anxiety").value as? String, "Mild")
     }
 
     func testValueButtonLabelSaysNotWrittenYet() {
