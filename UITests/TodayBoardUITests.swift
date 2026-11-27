@@ -37,14 +37,14 @@ final class TodayBoardUITests: XCTestCase {
         let app = launch("threeTrackersEmpty")
         XCTAssertTrue(track(app, "Focus").waitForExistence(timeout: 5))
         let tracks = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'track.'")).allElementsBoundByIndex
-        let order = tracks.sorted { $0.frame.minY < $1.frame.minY }.map(\.identifier)
+        let order = tracks.sorted { $0.frame.minY < $1.frame.minY }.map { $0.identifier }
         XCTAssertEqual(order, ["track.Sleep", "track.Energy", "track.Focus"])
     }
 
     func testDayOneHasNoTapToSkipHint() {
         let app = launch("threeTrackersEmpty")
         XCTAssertTrue(app.staticTexts["Drag any track to set it."].waitForExistence(timeout: 5))
-        let texts = app.staticTexts.allElementsBoundByIndex.map(\.label).joined(separator: "\n").lowercased()
+        let texts = app.staticTexts.allElementsBoundByIndex.map { $0.label }.joined(separator: "\n").lowercased()
         for banned in ["tap the number", "to skip", "late", "behind"] {
             XCTAssertFalse(texts.contains(banned), banned)
         }
