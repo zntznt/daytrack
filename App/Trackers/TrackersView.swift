@@ -28,8 +28,7 @@ struct TrackersView: View {
                     .accessibilityIdentifier("trackers.archived")
             }
         }
-        .scrollContentBackground(.hidden)
-        .background(AmbientBackground())
+        .daytrackList()
         .navigationTitle("Trackers")
         .toolbar {
             Menu {
@@ -78,8 +77,7 @@ struct ArchivedTrackersView: View {
                 if let fullReason { Text(fullReason).foregroundStyle(Tokens.textSecondary) }
             }
         }
-        .scrollContentBackground(.hidden)
-        .background(AmbientBackground())
+        .daytrackList()
         .navigationTitle("Archived")
     }
 }

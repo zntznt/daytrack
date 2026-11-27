@@ -44,6 +44,8 @@ lint() (
   report 4 "no banned copy in string literals (exceptions: scripts/lint-allow.txt)" \
     "$(scan -i "$LIT(logged|Nothing to log|streak|great job)$END" . \
       | grep -vFf <(grep -vE '^[[:space:]]*(#|$)' "$REPO/scripts/lint-allow.txt") || true)"
+  report 5 "every List or Form under App/ uses .daytrackList()" \
+    "$(scan -l 'List \{|Form \{' App | while read -r f; do grep -qF '.daytrackList()' "$f" || echo "$f"; done)"
   exit "$fail"
 )
 
@@ -67,6 +69,7 @@ selftest() {
   expect 2 App/Bad.swift 'let s = URLSession.shared'
   expect 3 App/Bad.swift 'let s = "Open until 23:59"'
   expect 4 App/Bad.swift 'let s = "Nothing to log"'
+  expect 5 App/Bad.swift 'var body: some View { List { Text("a") } }'
   rm -rf "$tmp"
   return "$fail"
 }
