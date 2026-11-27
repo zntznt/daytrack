@@ -21,6 +21,6 @@ private func trackers(active: Int, archived: Int = 0) -> [Tracker] {
 
     @Test func archiveIsUnlimited() {
         #expect(Roster.canActivate(alongside: trackers(active: 7, archived: 50)) == .allowed)
-        #expect(trackers(active: 0, archived: 50).allSatisfy(\.isArchived))
+        #expect(trackers(active: 0, archived: 50).allSatisfy { $0.isArchived })
     }
 }
