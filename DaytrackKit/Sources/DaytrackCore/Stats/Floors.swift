@@ -27,12 +27,12 @@ public enum Floors {
     public static let historyLine = 2
     public static let historySplit = pair
 
-    public static func report(_ tracker: Tracker, range: DateRange, record: Record) -> Shortfall {
+    public static func reportShortfall(_ tracker: Tracker, range: DateRange, record: Record) -> Shortfall {
         Shortfall(count: TrackerSummary(tracker: tracker, range: range, record: record).n, threshold: report)
     }
 
     /// The builder can generate when at least one selected tracker passes (Q5).
     public static func builderCanGenerate(selected: [Tracker], range: DateRange, record: Record) -> Bool {
-        selected.contains { report($0, range: range, record: record).passes }
+        selected.contains { reportShortfall($0, range: range, record: record).passes }
     }
 }

@@ -23,11 +23,11 @@ private func record(_ trackers: [Tracker], _ values: [DayValue], revisions: [Sca
 @Suite struct FloorsTests {
     @Test func thirteenValuesShortfallOfOne() {
         let mood = tracker("Mood")
-        let s = Floors.report(mood, range: march, record: record([mood], Array(repeating: .set(5), count: 13)))
+        let s = Floors.reportShortfall(mood, range: march, record: record([mood], Array(repeating: .set(5), count: 13)))
         #expect(s == Shortfall(count: 13, threshold: 14))
         #expect(s.remaining == 1)
         #expect(!s.passes)
-        let met = Floors.report(mood, range: march, record: record([mood], Array(repeating: .set(5), count: 15)))
+        let met = Floors.reportShortfall(mood, range: march, record: record([mood], Array(repeating: .set(5), count: 15)))
         #expect(met.remaining == 0)
         #expect(met.passes)
     }
@@ -35,7 +35,7 @@ private func record(_ trackers: [Tracker], _ values: [DayValue], revisions: [Sca
     @Test func skipsDoNotCountTowardFloor() {
         let mood = tracker("Mood")
         let values = Array(repeating: DayValue.set(5), count: 10) + Array(repeating: .skip, count: 10)
-        let s = Floors.report(mood, range: march, record: record([mood], values))
+        let s = Floors.reportShortfall(mood, range: march, record: record([mood], values))
         #expect(s.count == 10)
         #expect(s.remaining == 4)
     }
@@ -45,10 +45,10 @@ private func record(_ trackers: [Tracker], _ values: [DayValue], revisions: [Sca
         // 20 values from March 1; a revision on March 11 leaves 10 in the latest era.
         let rev = try ScaleRevision(tracker: mood, effectiveFrom: day("2027-03-11"), previousLabels: [])
         let rec = record([mood], Array(repeating: .set(5), count: 20), revisions: [rev])
-        #expect(Floors.report(mood, range: march, record: rec).count == 10)
+        #expect(Floors.reportShortfall(mood, range: march, record: rec).count == 10)
         // A range ending before the revision keeps its own era (Q5 amendment).
         let before = DateRange(start: start, end: day("2027-03-10"))!
-        #expect(Floors.report(mood, range: before, record: rec).count == 10)
+        #expect(Floors.reportShortfall(mood, range: before, record: rec).count == 10)
     }
 
     @Test func builderEnabledWhenOneSelectedTrackerPasses() {
@@ -61,7 +61,10 @@ private func record(_ trackers: [Tracker], _ values: [DayValue], revisions: [Sca
     }
 
     @Test func historyEmptyThresholds() {
-        #expect([Floors.historyChart, Floors.historyLine, Floors.historySplit] == [1, 2, 12])
+        #expect(Floors.historyChart == 1)
+        #expect(Floors.historyLine == 2)
+        #expect(Floors.historySplit == 12)
+        #expect(Floors.report == 14)
         #expect(Floors.pair == 12)
     }
 }
