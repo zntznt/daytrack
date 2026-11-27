@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Settings' reminder rows (decisions Q10). Plain values and closures only.
+/// Settings' reminder row and the screen it opens (decisions Q10). Plain values and closures only.
 struct ReminderSettingsView: View {
     let isOn: Bool, isDenied: Bool
     /// The chosen time as a date on a fixed GMT day; only its hour and minute count.
@@ -10,6 +10,11 @@ struct ReminderSettingsView: View {
     let onToggle: (Bool) -> Void, onPickTime: (Date) -> Void
 
     var body: some View {
+        NavigationLink("Daily reminder") { List { rows }.navigationTitle("Daily reminder") }
+            .accessibilityIdentifier("settings.reminderRow")
+    }
+
+    @ViewBuilder private var rows: some View {
         // A refusal is final here: the toggle stops asking and the line points to system settings.
         Toggle("Daily reminder", isOn: Binding(get: { isOn }, set: onToggle))
             .disabled(isDenied)

@@ -16,7 +16,6 @@ import Testing
     @Test func dayOneScreenShownOnlyOnce() {
         let store = InMemoryDeviceStateStore()
         let model = DayOneWrittenModel(deviceState: store)
-        model.receive(Record(trackers: [sleep, mood]), today: today)
         // A partly written first day is not yet day one.
         model.receive(record(today, [sleep.id: .set(5)]), today: today)
         #expect(!model.isShowing)

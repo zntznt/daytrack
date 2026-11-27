@@ -42,11 +42,7 @@ final class ReminderSettingsModel {
     func refresh() async { status = await client.authorizationStatus() }
 
     func setOn(_ on: Bool) async {
-        guard on else {
-            offTime = time
-            try? settings.setReminderAt(nil)
-            return
-        }
+        if !on { offTime = time; try? settings.setReminderAt(nil); return }
         await refresh()
         if status == .notDetermined { _ = try? await client.requestAuthorization() }
         await refresh()

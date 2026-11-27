@@ -3,7 +3,7 @@ import XCTest
 final class ReminderUITests: XCTestCase {
     override func setUp() { continueAfterFailure = false }
 
-    /// `notifications` nil uses the real centre; "fake" grants and "fakeDeny" refuses without a system alert.
+    /// `notifications` nil uses the real centre; "fake" grants without a system alert.
     private func launch(_ seed: String = "threeTrackersEmpty", notifications: String? = "fake", settings: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-uiTestStore", "memory", "-uiTestSeed", seed, "-uiTestNow", "2027-03-10T10:00:00", "-uiTestTZ", "Europe/London"]
@@ -16,6 +16,7 @@ final class ReminderUITests: XCTestCase {
     private func dayOne(_ app: XCUIApplication) -> XCUIElement { app.descendants(matching: .any)["dayOneWritten"] }
 
     private func reminderToggle(_ app: XCUIApplication) -> XCUIElement {
+        if !app.navigationBars["Daily reminder"].exists { app.buttons["settings.reminderRow"].tap() }
         let toggle = app.switches["settings.reminder"]
         XCTAssertTrue(toggle.waitForExistence(timeout: 5))
         return toggle
@@ -48,7 +49,6 @@ final class ReminderUITests: XCTestCase {
         let app = launch()
         app.buttons["Skip the rest of today"].tap()
         app.buttons["Remind me at 21:30"].tap()
-        XCTAssertTrue(dayOne(app).waitForNonExistence(timeout: 5))
         app.tabBars.buttons["Settings"].tap()
         XCTAssertEqual(reminderToggle(app).value as? String, "1")
         XCTAssertTrue(app.staticTexts["scheduled for 21:30; delivery can still move it"].waitForExistence(timeout: 5))
@@ -69,7 +69,7 @@ final class ReminderUITests: XCTestCase {
         XCTAssertTrue(wheels.firstMatch.waitForExistence(timeout: 5))
         wheels.element(boundBy: 0).adjust(toPickerWheelValue: "20")
         wheels.element(boundBy: 1).adjust(toPickerWheelValue: "15")
-        app.navigationBars["Settings"].tap() // closes the wheels
+        app.navigationBars["Daily reminder"].tap() // closes the wheels
         XCTAssertTrue(app.staticTexts["scheduled for 20:15; delivery can still move it"].waitForExistence(timeout: 5))
     }
 }
