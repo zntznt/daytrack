@@ -70,13 +70,13 @@ final class AmendUITests: XCTestCase {
     }
 
     func testYesterdayReadOnlyAfterClose() {
-        let app = launch(now: "2027-03-10T19:59:55")
+        let app = launch(now: "2027-03-10T19:59:40")
         let board = openAmend(app)
         let skipRest = board.buttons["Skip the rest of yesterday"]
         XCTAssertTrue(skipRest.waitForExistence(timeout: 5))
         // The close at 20:00 takes the day action away and the rows stop taking input.
         let gone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: skipRest)
-        wait(for: [gone], timeout: 10)
+        wait(for: [gone], timeout: 30)
         XCTAssertFalse(chip(app).exists)
         tapMiddle(board, "Sleep")
         XCTAssertEqual(track(board, "Sleep").value as? String, "not written yet")
