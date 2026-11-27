@@ -76,3 +76,5 @@ Stop, push what you have, and report in the PR (or to the owner if there is no P
 - Never show a tracker value in the widget.
 - Never leave an export file (copy, CSV, PDF) inside the app after its sheet closes. Exports live in `tmp/Exports/` only while shared.
 - Never edit outside your scope, never push to main, never merge, never edit the Mac checkout, and never add `Co-Authored-By` or AI attribution.
+
+- If your scope lists a view but not the container that wires it, stop and report it as a scope gap (README §4, Container rule). Don't work around it by giving the view state.

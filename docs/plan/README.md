@@ -156,6 +156,8 @@ Why: Linux has no Swift or Xcode. Editing on the Mac through rex would mean blin
 
 ## 4. Conventions and Definition of Done
 
+**Container rule.** A task that adds or changes UI on an existing screen also lists that screen's container (`*Container.swift`) in its scope. Views are presentational and have no `AppState`, so the container is the only place that wires new UI to the use cases. A task that adds a new screen lists the parent that presents it (a container or `RootView`).
+
 - **Branches:** `<type>/<task-id-lowercase>-<slug>`, branched from `main`. If a dependency is not merged yet, stack the branch on the dependency's branch and say so in the PR (chained PR).
 - **Commits:** conventional commits (`feat(today): …`, `test(core): …`, `build: …`). No AI attribution, no `Co-Authored-By` line, no "Generated with" line.
 - **PR:** the title is `<type>(<scope>): <TASK-ID> <title>`. The body contains the goal, the tail of `.verify/last.log`, any **[O#]** defaults used, and a **Follow-ups** section. Work found outside the task's scope goes in Follow-ups and is never done in the task. The owner merges. Agents never merge and never push to main.
