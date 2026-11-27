@@ -1,12 +1,14 @@
 import DaytrackCore
 import SwiftUI
 
-/// Today's board. Runs the `DayTicker` and opens yesterday's board from the amend chip.
+/// Today's board. Runs the `DayTicker`, opens yesterday's board from the amend chip, and offers the reminder after day one.
 struct TodayContainer: View {
     let state: AppState
     let onBringBack: () -> Void
     @State private var model: TodayModel
     @State private var ticker: DayTicker
+    @State private var dayOne: DayOneWrittenModel
+    @State private var reminder: ReminderSettingsModel
     @State private var amending = false
     @Environment(\.scenePhase) private var phase
 
@@ -17,6 +19,8 @@ struct TodayContainer: View {
         _ticker = State(initialValue: DayTicker(clock: state.env.clock, tz: state.env.timeZone,
                                                 lockHour: { [recorder = state.recorder] in recorder.record.settings.lockHour },
                                                 onBoundary: model.tick))
+        _dayOne = State(initialValue: DayOneWrittenModel(deviceState: state.env.deviceState))
+        _reminder = State(initialValue: ReminderSettingsModel(state: state))
     }
 
     var body: some View {
@@ -24,6 +28,15 @@ struct TodayContainer: View {
             .onAppear { ticker.refresh() }
             .onChange(of: phase) { if $1 == .active { ticker.refresh() } }
             .sheet(isPresented: $amending) { AmendContainer(state: state, onBringBack: { amending = false; onBringBack() }) }
+            // The model's record is held mid-drag, so the screen never appears under a finger.
+            .onChange(of: model.record, initial: true) { dayOne.receive($1, today: model.day) }
+            .safeAreaInset(edge: .bottom) {
+                if dayOne.isShowing {
+                    DayOneWrittenView(remindTitle: reminder.remindTitle,
+                                      onRemind: { Task { await reminder.setOn(true); dayOne.dismiss() } },
+                                      onNoReminder: { Task { await reminder.setOn(false); dayOne.dismiss() } })
+                }
+            }
     }
 }
 
