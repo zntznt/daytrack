@@ -132,8 +132,8 @@ device() {
   [[ -n $DEVICE ]] || { echo "DEVICE is not set" >&2; return 1; }
   xcodegen generate --quiet || return 1
   mkdir -p build
-  xcodebuild -project Daytrack.xcodeproj -scheme Daytrack -configuration Release -destination 'generic/platform=iOS' \
-    -derivedDataPath build/DD -allowProvisioningUpdates build > build/xcodebuild.log 2>&1 \
+  xcodebuild -project Daytrack.xcodeproj -scheme Daytrack -configuration Release -destination "id=$DEVICE" \
+    -derivedDataPath build/DD -allowProvisioningUpdates -allowProvisioningDeviceRegistration build > build/xcodebuild.log 2>&1 \
     || { tail -n 40 build/xcodebuild.log; return 1; }
   xcrun devicectl device install app --device "$DEVICE" build/DD/Build/Products/Release-iphoneos/Daytrack.app
 }
