@@ -29,7 +29,7 @@ final class LaunchUITests: XCTestCase {
         let app = launch(["-uiTestSeed", "threeTrackersEmpty"])
         let tabs = app.tabBars.buttons
         XCTAssertTrue(tabs.firstMatch.waitForExistence(timeout: 10))
-        XCTAssertEqual(tabs.allElementsBoundByIndex.map(\.label), ["Today", "Settings"])
+        XCTAssertEqual(tabs.allElementsBoundByIndex.map { $0.label }, ["Today", "Settings"])
     }
 
     func testUITestClockArgumentShowsGivenDay() {
