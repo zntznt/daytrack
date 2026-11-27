@@ -10,7 +10,7 @@ struct ReminderSettingsView: View {
     let onToggle: (Bool) -> Void, onPickTime: (Date) -> Void
 
     var body: some View {
-        NavigationLink("Daily reminder") { List { rows }.daytrackList().navigationTitle("Daily reminder") }
+        NavigationLink("Daily reminder") { List { rows.listRowBackground(Tokens.surfaceRaised) }.daytrackList().navigationTitle("Daily reminder") }
             .accessibilityIdentifier("settings.reminderRow")
     }
 

@@ -22,6 +22,7 @@ struct SettingsView<ReminderRows: View, DataRows: View, Destination: View>: View
                     NavigationLink("Trackers", value: SettingsRoute.trackers)
                         .accessibilityIdentifier("settings.trackers")
                 }
+                .listRowBackground(Tokens.surfaceRaised)
                 Section("Day") {
                     // A pushed list, not `.pickerStyle(.navigationLink)`, so it takes the list look.
                     NavigationLink {
@@ -34,11 +35,13 @@ struct SettingsView<ReminderRows: View, DataRows: View, Destination: View>: View
                     .accessibilityIdentifier("settings.lockHour")
                     reminderRows
                 }
-                Section("Data") { dataRows }
+                .listRowBackground(Tokens.surfaceRaised)
+                Section("Data") { dataRows }.listRowBackground(Tokens.surfaceRaised)
                 Section {
                     LabeledContent("Version") { Text(verbatim: version) }
                         .accessibilityIdentifier("settings.version")
                 }
+                .listRowBackground(Tokens.surfaceRaised)
             }
             .daytrackList()
             .navigationTitle("Settings")
@@ -73,6 +76,7 @@ private struct LockHourList: View {
                 }
                 .accessibilityAddTraits(item.hour == lockHour ? .isSelected : [])
             }
+            .listRowBackground(Tokens.surfaceRaised)
         }
         .daytrackList()
         .navigationTitle("Yesterday stays open until")
