@@ -18,6 +18,7 @@ struct SettingsContainer: View {
                          if let hour = pendingHour { try? state.settings.confirmLockHour(hour) }
                          pendingHour = nil
                      },
-                     onCancelLower: { pendingHour = nil })
+                     onCancelLower: { pendingHour = nil },
+                     dataRows: { SaveCopyContainer(state: state) })
     }
 }
