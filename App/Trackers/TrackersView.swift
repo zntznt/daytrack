@@ -23,13 +23,14 @@ struct TrackersView: View {
             } footer: {
                 if let fullReason { Text(fullReason).foregroundStyle(Tokens.textSecondary) }
             }
+            .listRowBackground(Tokens.surfaceRaised)
             Section {
                 NavigationLink("Archived", value: SettingsRoute.archived)
                     .accessibilityIdentifier("trackers.archived")
             }
+            .listRowBackground(Tokens.surfaceRaised)
         }
-        .scrollContentBackground(.hidden)
-        .background(AmbientBackground())
+        .daytrackList()
         .navigationTitle("Trackers")
         .toolbar {
             Menu {
@@ -60,6 +61,7 @@ struct ArchivedTrackersView: View {
                 Text("Off the board, still in the record. Every day an archived tracker wrote stays in your history, its charts and every export. It simply stopped asking.")
                     .foregroundStyle(Tokens.textSecondary)
             }
+            .listRowBackground(Tokens.surfaceRaised)
             Section {
                 ForEach(archived) { tracker in
                     HStack {
@@ -77,9 +79,9 @@ struct ArchivedTrackersView: View {
             } footer: {
                 if let fullReason { Text(fullReason).foregroundStyle(Tokens.textSecondary) }
             }
+            .listRowBackground(Tokens.surfaceRaised)
         }
-        .scrollContentBackground(.hidden)
-        .background(AmbientBackground())
+        .daytrackList()
         .navigationTitle("Archived")
     }
 }

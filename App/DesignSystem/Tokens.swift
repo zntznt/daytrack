@@ -6,6 +6,8 @@ enum Tokens {
     static let background = Color(hex: 0x120903)
     /// The lighter end of the ambient backdrop.
     static let surface = Color(hex: 0x1F1408)
+    /// List rows over the backdrop, in place of the system grey.
+    static let surfaceRaised = Color(hex: 0x2B1C0C)
     static let text = Color(hex: 0xFDCF6F)
     static let textSecondary = Color(hex: 0xB49A73)
     static let textFaint = Color(hex: 0xA08764)

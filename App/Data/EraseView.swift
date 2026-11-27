@@ -15,10 +15,10 @@ struct EraseView: View {
                 Text(verbatim: confirm).accessibilityIdentifier("erase.confirm")
                 Text(verbatim: noOtherCopy).foregroundStyle(.secondary).accessibilityIdentifier("erase.noOtherCopy")
             }
-            Button("Keep it", action: onKeep).accessibilityIdentifier("erase.keep")
-            Button("Erase it all", role: .destructive, action: onErase).accessibilityIdentifier("erase.eraseAll")
+            Button("Keep it", action: onKeep).buttonStyle(.glass).accessibilityIdentifier("erase.keep")
+            Button("Erase it all", role: .destructive, action: onErase).buttonStyle(.glass).tint(.red).accessibilityIdentifier("erase.eraseAll")
         } else {
-            Button("Erase everything", role: .destructive, action: onAsk).accessibilityIdentifier("settings.erase")
+            Button("Erase everything", role: .destructive, action: onAsk).buttonStyle(.glass).tint(.red).accessibilityIdentifier("settings.erase")
         }
     }
 }

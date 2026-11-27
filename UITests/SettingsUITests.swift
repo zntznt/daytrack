@@ -92,4 +92,39 @@ final class SettingsUITests: XCTestCase {
         XCTAssertTrue(shown(app).contains("22:00"))
         XCTAssertFalse(amendChip(app).exists)
     }
+
+    func testLockHourConfirmStillAsksWhenLowering() {
+        let app = launch()
+        pick(app, "09:00")
+        let close = app.buttons["Close yesterday"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5))
+        // The hour list waits behind the confirm.
+        XCTAssertTrue(app.navigationBars["Yesterday stays open until"].exists)
+        close.tap()
+        backToSettings(app)
+        XCTAssertTrue(shown(app).contains("09:00"))
+    }
+
+    func testEveryListScreenHasBackdrop() {
+        let app = launch()
+        let backdrop = app.descendants(matching: .any)["daytrackList"]
+        func expectBackdrop(_ title: String) {
+            XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5), title)
+            XCTAssertTrue(backdrop.waitForExistence(timeout: 5), title)
+        }
+        func back() { app.navigationBars.firstMatch.buttons.element(boundBy: 0).tap() }
+        expectBackdrop("Settings")
+        app.buttons["settings.trackers"].tap()
+        expectBackdrop("Trackers")
+        app.buttons["trackers.archived"].tap()
+        expectBackdrop("Archived")
+        back()
+        XCTAssertTrue(app.navigationBars["Trackers"].waitForExistence(timeout: 5))
+        back()
+        picker(app).tap()
+        expectBackdrop("Yesterday stays open until")
+        back()
+        app.buttons["settings.reminderRow"].tap()
+        expectBackdrop("Daily reminder")
+    }
 }

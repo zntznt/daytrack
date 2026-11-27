@@ -8,6 +8,7 @@ struct SaveCopyView: View {
 
     var body: some View {
         Button("Save a full copy (JSON)", action: onSave)
+            .buttonStyle(.glass)
             .accessibilityIdentifier("settings.saveCopy")
         if let notSavedLine {
             Text(verbatim: notSavedLine)
