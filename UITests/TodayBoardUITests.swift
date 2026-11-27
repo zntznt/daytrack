@@ -98,4 +98,25 @@ final class TodayBoardUITests: XCTestCase {
             XCTAssertTrue(button.isHittable, name)
         }
     }
+
+    func testThreeRowsGrowToFillBoard() {
+        let app = launch("threeTrackersEmpty")
+        let tracks = ["Sleep", "Energy", "Focus"].map { track(app, $0) }
+        XCTAssertTrue(tracks[0].waitForExistence(timeout: 5))
+        // Rows stack with no gap, so track-to-track pitch is the row height. Three rows have far more
+        // than 3 × 112pt free, so each grows to the cap.
+        XCTAssertEqual(tracks[1].frame.minY - tracks[0].frame.minY, 112, accuracy: 1)
+        XCTAssertEqual(tracks[2].frame.minY - tracks[1].frame.minY, 112, accuracy: 1)
+        // The extra height is padding; the track stays one 44pt line.
+        for t in tracks { XCTAssertEqual(t.frame.height, 44, accuracy: 1, t.identifier) }
+    }
+
+    func testDotStripClearOfFirstRow() {
+        let app = launch("eightTrackers")
+        let first = track(app, "Sleep")
+        XCTAssertTrue(first.waitForExistence(timeout: 5))
+        // The row's name line (about 18pt) and its 4pt gap sit above the track, so 16pt clear of the row
+        // means at least 16 + 22 from the strip to the track.
+        XCTAssertGreaterThanOrEqual(first.frame.minY - dotStrip(app).frame.maxY, 16 + 22)
+    }
 }

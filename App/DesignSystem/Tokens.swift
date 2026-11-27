@@ -10,6 +10,14 @@ enum Tokens {
     static let textSecondary = Color(hex: 0xB49A73)
     static let textFaint = Color(hex: 0xA08764)
 
+    /// Layout spacing in points.
+    enum Space {
+        static let s: CGFloat = 8
+        static let m: CGFloat = 12
+        static let l: CGFloat = 16
+        static let xl: CGFloat = 24
+    }
+
     static let textHierarchy: [Color] = [text, textSecondary, textFaint]
     static let all: [(name: String, color: Color)] = [
         ("accent", accent), ("background", background), ("surface", surface),

@@ -62,4 +62,17 @@ final class ChoicePadUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Anxiety, Moderate. Activate for choices"].exists)
         XCTAssertTrue(last(app).hasPrefix("set "))
     }
+
+    func testOrdinalPadKeysShowFullLabels() {
+        let app = launchPad()
+        openPad(app, "Anxiety, Mild. Activate for choices", expecting: "Skip Anxiety")
+        let skipWidth = app.buttons["Skip Anxiety"].frame.width
+        for word in ["Absent", "Present", "Mild", "Moderate", "Severe"] {
+            let key = app.buttons[word]
+            XCTAssertTrue(key.exists, word)
+            // One word per row, as wide as the Skip key, so no word is squeezed.
+            XCTAssertEqual(key.frame.width, skipWidth, accuracy: 1, word)
+            XCTAssertGreaterThanOrEqual(key.frame.height.rounded(), 44, word)
+        }
+    }
 }

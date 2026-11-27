@@ -5,6 +5,8 @@ import SwiftUI
 /// The track sets the value on touch-down; the value box is a separate button that opens the pad (decisions Q4).
 struct SliderRowView: View {
     let state: RowState
+    /// The row's share of the board, 72–112pt. The extra over 72 goes to padding and the name, never the track.
+    var height: CGFloat = 72
     /// The value under the finger, each time it moves to a new stop.
     let onPreview: (DayValue?) -> Void
     /// The value to write: on release, or on an accessibility step.
@@ -28,13 +30,13 @@ struct SliderRowView: View {
     }
 
     var body: some View {
-        // Two lines, at most 72pt, so eight rows fit on one screen (HANDOFF "Eight things, one screen").
+        // Two lines, 72pt at the least, so eight rows fit on one screen (HANDOFF "Eight things, one screen").
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
                 Image(systemName: state.tracker.symbol)
                     .font(.subheadline).foregroundStyle(Tokens.textFaint).frame(width: 18)
                 Text(verbatim: state.tracker.name)
-                    .typography(.body).foregroundStyle(Tokens.text)
+                    .typography(height > 72 ? .rowLabel : .body).foregroundStyle(Tokens.text)
             }
             .accessibilityHidden(true)
             HStack(spacing: 12) {
@@ -42,6 +44,7 @@ struct SliderRowView: View {
                 valueButton
             }
         }
+        .frame(minHeight: height)
         // A container for the row's frame only; the track and button stay the accessible elements.
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("row.\(state.tracker.name)")
