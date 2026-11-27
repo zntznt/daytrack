@@ -27,7 +27,7 @@ When it is done, the app has:
 - "Save a full copy" (JSON), CSV export, restore with a diff, a "move to a new phone" explainer, and Erase everything (Q2, Q3, Q8).
 - A local daily reminder (`UNCalendarNotificationTrigger`, 14 days ahead), a missed-reminder strip and a lapse strip (Q10).
 - A WidgetKit widget that shows counts only, plus home-screen quick actions.
-- A Liquid Glass look (`glassEffect`, `GlassEffectContainer`) over a warm ambient background. It stays legible with Reduce Transparency, Increase Contrast and AX5 text sizes.
+- Native Liquid Glass on system controls (tab bar, nav bars, toolbars, `.buttonStyle(.glass)`, sheets); content is plain amber-on-warm-dark over a warm ambient background. It stays legible at AX5 text sizes; the system handles Reduce Transparency and Increase Contrast for glass.
 - No network code, no server, no analytics and no third-party code (rule 1). The record is excluded from device backup (Q8).
 
 ---
@@ -71,7 +71,7 @@ DaytrackKit/               Swift package (swift-tools-version 6.2; platforms iOS
 App/                       iOS target "Daytrack"
   Composition/   AppEnvironment (the only place adapters are wired), LaunchOverrides (#if DEBUG),
                  Fixtures (DEBUG seed records), RootView (onboarding | tabs | unreadable)
-  DesignSystem/  AmbientBackground, GlassSurface, GlassStyle (legibility fallback), Tokens, Typography
+  DesignSystem/  AmbientBackground, Tokens, Typography, catalog (native glass controls only)
   Today/ Onboarding/ History/ Report/ Settings/ Trackers/ Data/ Reminders/ QuickActions/
                  Each feature has XxxContainer (owns the @Observable model and calls use cases)
                  and XxxView (presentational: plain values in, closures out, no stores or ports).
@@ -217,7 +217,7 @@ Tasks M0.01 and M0.02 come before done.sh exists, so each lists its own literal 
 | M2.02 | Recorder and settings use cases | M | M2.01 |
 | M2.03 | TrackerManager use case | M | M2.02 |
 | M3.01 | App shell, composition root, launch overrides, fixtures | M | M2.03, M0.03 |
-| M3.02 | Liquid Glass design system and legibility gate | M | M3.01 |
+| M3.02 | Design system tokens and native glass gate | M | M3.01 |
 | M3.03 | Onboarding | M | M3.02 |
 | M3.04 | Row state model (pure gesture and label logic) | S | M3.01, M1.08 |
 | M3.05 | Slider row view | M | M3.04, M3.02 |
@@ -318,7 +318,7 @@ The pure domain tasks off the MVP path (M5.01, M5.02, M6.01, M6.02, M7.01, M7.02
 | `-uiTestSeed <fixture>` | Seed the record from a deterministic fixture |
 | `-uiTestLockHour <0-23>` | Override the seeded lock hour (M3.01) |
 | `-uiTestScreen <name>` | Open a DEBUG screen directly: `catalog`, `today`, `settings`, … |
-| `-uiTestLegibility reduceTransparency\|increaseContrast` | Force the `GlassStyle` resolver, because the SwiftUI environment values are read-only |
+| `-uiTestLegibility reduceTransparency\|increaseContrast` | Unused since the native-glass decision; the system resolves glass legibility |
 | `-uiTestExportTo <dir>` | Save a copy by writing to this directory instead of presenting `.fileExporter` (M3.11) |
 | `-uiTestRestoreFile <fixture>` | Restore from a bundled fixture instead of `.fileImporter` (M7.03) |
 | `-uiTestNotifications fake\|fakeDeny` | A fake notification center that grants or denies (M3.13; used by M3.14) |
@@ -338,7 +338,7 @@ The pure domain tasks off the MVP path (M5.01, M5.02, M6.01, M6.02, M7.01, M7.02
 | G0 | before M0.01 | Merge the docs branch (`chore/design-docs`, which includes `docs/plan/`) into main |
 | G1 | M0.02 | On Thunderbolt: `brew install xcodegen`. Confirm the iPhone 18 Pro and iPhone 17e simulators exist |
 | G2 | M0.03 | Say which iOS version your iPhone runs (Settings › General › About). Confirms **[O7]** |
-| G3 | M3.02 | Approve the four glass legibility screenshots in `~/repos/daytrack/build/shots/` on the Mac |
+| G3 | M3.02 | Approve the catalog screenshots (native glass controls over the warm background) in `~/repos/daytrack/build/shots/` on the Mac |
 | G4 | M3.15 | Fill in `Local.xcconfig` (DEVELOPMENT_TEAM, BUNDLE_PREFIX), connect the phone, enable Developer Mode, and say whether the account is free or paid **[O8]** |
 | G5 | every PR | Review and merge |
 

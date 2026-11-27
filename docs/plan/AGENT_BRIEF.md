@@ -24,7 +24,7 @@ You are building **one task** of Daytrack, a private daily self-tracking app for
 - "Tapping a value toggles skipped" (Q4). A tap opens the choice pad.
 - "Lock hour minus offset" and exact alarms (Q10). The reminder is an absolute local time.
 - Font Awesome icon names. Use SF Symbols.
-- The flat-dark palette in HANDOFF §4. The look is Liquid Glass over a warm ambient background. §4's type hierarchy, spacing, motion rules and "no grey" still guide you.
+- The flat-dark palette in HANDOFF §4. The look is native Liquid Glass on system controls only (tab bar, nav bars, toolbars, `.buttonStyle(.glass)`, sheets); content is plain amber-on-warm-dark. Never add a custom `glassEffect` to content. §4's type hierarchy, spacing, motion rules and "no grey" still guide you.
 
 ## 2. How to stay on task
 
