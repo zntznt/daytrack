@@ -5,6 +5,18 @@ struct RootView: View {
     let state: AppState
 
     var body: some View {
+        #if DEBUG
+        if let screen = state.env.screen, screen != "settings" {
+            DebugScreens.view(for: screen)
+        } else {
+            routed
+        }
+        #else
+        routed
+        #endif
+    }
+
+    @ViewBuilder private var routed: some View {
         switch state.route {
         case .onboarding:
             Text("Daytrack") // placeholder until M3.03
