@@ -50,14 +50,14 @@ private func day(_ s: String) -> DayKey { DayKey(s)! }
     @Test func springForwardGap_closesAtFirstInstantAfter() {
         // 02:00 does not exist on 2027-03-14 in New York; clocks jump from 01:59:59 EST to 03:00 EDT.
         let close = DayClosing.closeInstant(day("2027-03-13"), lockHour: 2, tz: newYork)
-        #expect(close == Date(timeIntervalSince1970: 1_805_011_200))  // 2027-03-14T07:00:00Z = 03:00 EDT
+        #expect(close == Date(timeIntervalSince1970: 1_805_007_600))  // 2027-03-14T07:00:00Z = 03:00 EDT
         #expect(close == at("2027-03-14", 3, in: newYork))
     }
 
     @Test func fallBack_closesAtFirstOccurrence() {
         // 01:00 happens twice on 2027-11-07 in New York; the first is EDT (UTC-4).
         let close = DayClosing.closeInstant(day("2027-11-06"), lockHour: 1, tz: newYork)
-        #expect(close == Date(timeIntervalSince1970: 1_825_570_800))  // 2027-11-07T05:00:00Z = 01:00 EDT
+        #expect(close == Date(timeIntervalSince1970: 1_825_563_600))  // 2027-11-07T05:00:00Z = 01:00 EDT
     }
 
     @Test func raisingLockHourNeverReopensClosedDay() {
