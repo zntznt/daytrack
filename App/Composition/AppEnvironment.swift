@@ -9,6 +9,8 @@ struct AppEnvironment {
     var clock: Clock
     var timeZone: TimeZone
     var reminders: ReminderScheduling = NoReminders()
+    /// The centre the reminders and the permission prompt (M3.14) go through.
+    var notifications: NotificationCenterClient = UserNotificationCenterClient()
     var widget: WidgetPublishing = NoWidget()
     /// Set only by `-uiTestScreen` in DEBUG.
     var screen: String?
@@ -21,8 +23,15 @@ struct AppEnvironment {
     /// File stores in `Application Support/Daytrack/`, the system clock and zone.
     static func live() -> AppEnvironment {
         let directory = URL.applicationSupportDirectory.appendingPathComponent("Daytrack", isDirectory: true)
-        return AppEnvironment(records: FileRecordStore(directory: directory), deviceState: FileDeviceStateStore(directory: directory),
-                              clock: SystemClock(), timeZone: .autoupdatingCurrent)
+        var env = AppEnvironment(records: FileRecordStore(directory: directory), deviceState: FileDeviceStateStore(directory: directory),
+                                 clock: SystemClock(), timeZone: .autoupdatingCurrent)
+        env.wireReminders()
+        return env
+    }
+
+    /// Call again after replacing `notifications`, `deviceState` or `timeZone`.
+    mutating func wireReminders() {
+        reminders = NotificationScheduler(client: notifications, deviceState: deviceState, tz: timeZone)
     }
 
     /// Purges `tmp/Exports/` first, so no copy outlives a crash or a kill with a sheet open.
@@ -38,7 +47,7 @@ struct AppEnvironment {
 
 struct SystemClock: Clock { var now: Date { Date() } }
 
-/// Replaced in M3.13.
+/// For tests that do not look at reminders.
 struct NoReminders: ReminderScheduling { func replan(record: Record, now: Date) {}; func removeAll() {} }
 
 /// Replaced in M8.03.
