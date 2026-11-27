@@ -41,5 +41,7 @@ private struct WrittenFile: Transferable {
 
     static var transferRepresentation: some TransferRepresentation {
         FileRepresentation(exportedContentType: .json) { SentTransferredFile($0.url) }
+            // Without a name the exporter's file wrapper gets nil and throws, which aborted the app on device.
+            .suggestedFileName { $0.url.lastPathComponent }
     }
 }

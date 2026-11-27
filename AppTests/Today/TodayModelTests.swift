@@ -37,6 +37,12 @@ private final class StepClock: Clock, @unchecked Sendable { var now: Date; init(
         #expect(board.rows.map(\.tracker.name) == ["Sleep", "Mood renamed"])
     }
 
+    @Test func noAmendChipWhenNoTrackerExistedYesterday() {
+        let made = Tracker(name: "Sleep", symbol: "circle", type: .numeric, createdAt: day)
+        #expect(model([made]).0.amendChip == nil)
+        #expect(model([tracker("Sleep")]).0.amendChip != nil)
+    }
+
     @Test func closedDayWriteLeavesStoredValue() throws {
         let sleep = tracker("Sleep")
         let (board, recorder) = model([sleep])

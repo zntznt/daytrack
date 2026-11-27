@@ -79,9 +79,11 @@ final class TodayModel {
 
     /// "until Wed 20:00" while yesterday is open; nil on Amend, at lock hour 0, or once yesterday has closed.
     var amendChip: String? {
-        let s = record.settings
-        guard follows, case .yesterdayOpen(let until) = DayClosing.status(
-            of: day.adding(days: -1), now: clock.now, lockHour: s.lockHour, closedThrough: s.closedThrough, tz: tz)
+        let s = record.settings, yesterday = day.adding(days: -1)
+        // Trackers made today hold nothing for yesterday (Q11b), so there is nothing to amend.
+        guard follows, record.trackers.contains(where: { ActiveSpan.isActive($0, on: yesterday) }),
+              case .yesterdayOpen(let until) = DayClosing.status(
+            of: yesterday, now: clock.now, lockHour: s.lockHour, closedThrough: s.closedThrough, tz: tz)
         else { return nil }
         return Copy.amendChip(closeInstant: until, timeZone: tz, locale: .autoupdatingCurrent)
     }
