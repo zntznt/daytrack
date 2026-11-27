@@ -2,9 +2,13 @@ import Foundation
 import Testing
 import UserNotifications
 
-/// Q10 amendment 2 and "Unverified", against the real centre on the simulator (docs/spikes/notifications.md).
-/// Uses its own `spike-` ids so the app's own `reminder-` requests are left alone.
-@Suite(.serialized) struct NotificationSpikeTests {
+/// Q10 amendment 2, against the real centre (docs/spikes/notifications.md). Uses its own `spike-` ids.
+/// The iOS 27.2 simulator refuses `add` to a hosted test (UNErrorDomain 2003), so these run only where Daytrack
+/// already has full authorization: on a device, at M3.15.
+@Suite(.serialized, .enabled("needs full notification authorization") {
+    await UNUserNotificationCenter.current().notificationSettings().authorizationStatus == .authorized
+})
+struct NotificationSpikeTests {
     let center = UNUserNotificationCenter.current()
 
     private func requests(_ prefix: String, hour: Int) -> [UNNotificationRequest] {
@@ -21,14 +25,6 @@ import UserNotifications
 
     private func spikePending() async -> [UNNotificationRequest] {
         await center.pendingNotificationRequests().filter { $0.identifier.hasPrefix("spike-") }
-    }
-
-    /// Provisional authorization never prompts, so a hosted unit test can add requests.
-    /// Unauthorized, `add` throws UNErrorDomain 2003 "Source is not authorized".
-    init() async throws {
-        let status = await center.notificationSettings().authorizationStatus
-        if status == .notDetermined { _ = try await center.requestAuthorization(options: [.alert, .provisional]) }
-        print("spike: authorization", status.rawValue, "->", await center.notificationSettings().authorizationStatus.rawValue)
     }
 
     private func clear() async {
