@@ -103,7 +103,6 @@ final class TodayBoardUITests: XCTestCase {
         for name in ["Sleep", "Energy", "Focus", "Mood", "Movement", "Work", "Anxiety", "Meds taken"] {
             let t = track(app, name)
             XCTAssertTrue(t.waitForExistence(timeout: 5), name)
-            print("row \(name) track \(t.frame) tabBarTop \(tabBarTop)")
             XCTAssertTrue(t.isHittable, name)
             // Above the tab bar, not merely on screen behind it.
             XCTAssertLessThanOrEqual(t.frame.maxY, tabBarTop, name)
