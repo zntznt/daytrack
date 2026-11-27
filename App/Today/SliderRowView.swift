@@ -28,18 +28,23 @@ struct SliderRowView: View {
     }
 
     var body: some View {
+        // Two lines, at most 72pt, so eight rows fit on one screen (HANDOFF "Eight things, one screen").
         VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 Image(systemName: state.tracker.symbol)
-                    .foregroundStyle(Tokens.textFaint).frame(width: 18).accessibilityHidden(true)
+                    .font(.subheadline).foregroundStyle(Tokens.textFaint).frame(width: 18)
                 Text(verbatim: state.tracker.name)
-                    .typography(.rowLabel).foregroundStyle(Tokens.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .accessibilityHidden(true)
+                    .typography(.body).foregroundStyle(Tokens.text)
+            }
+            .accessibilityHidden(true)
+            HStack(spacing: 12) {
+                track
                 valueButton
             }
-            track
         }
+        // A container for the row's frame only; the track and button stay the accessible elements.
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("row.\(state.tracker.name)")
     }
 
     private var valueButton: some View {
