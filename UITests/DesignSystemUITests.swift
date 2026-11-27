@@ -34,6 +34,10 @@ final class DesignSystemUITests: XCTestCase {
 
     func testCatalogPassesAccessibilityAudit() throws {
         let (app, _) = launchCatalog()
-        try app.performAccessibilityAudit()
+        // Never ignores an issue; prints each so the log names the element.
+        try app.performAccessibilityAudit { issue in
+            print("audit issue: \(issue.compactDescription) on '\(issue.element?.label ?? "?")'")
+            return false
+        }
     }
 }
