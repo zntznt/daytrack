@@ -14,6 +14,8 @@ struct LaunchOverrides {
     var screen: String?
     /// A path, absolute or under tmp/.
     var exportTo: String?
+    /// "fake" grants permission, "fakeDeny" refuses it; both keep requests in memory.
+    var notifications: String?
 
     init(arguments: [String]) {
         func value(_ flag: String) -> String? {
@@ -38,6 +40,7 @@ struct LaunchOverrides {
         seed = value("-uiTestSeed")
         screen = value("-uiTestScreen")
         exportTo = value("-uiTestExportTo")
+        notifications = value("-uiTestNotifications")
     }
 
     /// The live environment with each given override applied. A seed only fills an empty store, so relaunches keep their files.
@@ -57,6 +60,13 @@ struct LaunchOverrides {
             env.records = FileRecordStore(directory: directory)
             env.deviceState = FileDeviceStateStore(directory: directory)
         }
+        switch notifications {
+        case nil: break
+        case "fake": env.notifications = FakeNotificationCenterClient(grants: true)
+        case "fakeDeny": env.notifications = FakeNotificationCenterClient(grants: false)
+        case let other?: preconditionFailure("-uiTestNotifications wants fake or fakeDeny, got \(other)")
+        }
+        env.wireReminders()
         if let seed, case .empty = try env.records.load() {
             let today = LocalCalendar(timeZone: env.timeZone).dayKey(for: env.clock.now)
             var (record, device) = Fixtures.make(seed, today: today, tz: env.timeZone)
