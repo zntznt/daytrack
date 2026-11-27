@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Settings: Trackers, Day, Reminder, Data, then the version (HANDOFF §3, Q7a). Plain values and closures only.
+/// Settings: Trackers, Day (with the reminder), Data, then the version (HANDOFF §3, Q7a). Plain values and closures only.
 struct SettingsView<ReminderRows: View, DataRows: View>: View {
     /// Each hour 0–23 with its derived label (`Copy.settingsLockHour`).
     let hours: [(hour: Int, label: String)]
@@ -27,8 +27,8 @@ struct SettingsView<ReminderRows: View, DataRows: View>: View {
                     }
                     .pickerStyle(.navigationLink)
                     .accessibilityIdentifier("settings.lockHour")
+                    reminderRows
                 }
-                Section("Reminder") { reminderRows }
                 Section("Data") { dataRows }
                 Section {
                     LabeledContent("Version") { Text(verbatim: version) }
