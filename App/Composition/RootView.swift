@@ -42,7 +42,7 @@ struct TabsView: View {
                 TodayContainer(state: state, onBringBack: { tab = .settings })
             }
             SwiftUI.Tab("Settings", systemImage: "gearshape", value: Tab.settings) {
-                Text("Settings") // placeholder until M3.10
+                SettingsContainer(state: state)
             }
         }
     }
