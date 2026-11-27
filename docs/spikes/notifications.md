@@ -1,6 +1,6 @@
 # Spike: iOS pending notification limits (M3.13)
 
-**Status: not verified; run on device at M3.15.** Nothing here is verified on simulator or device yet.
+**Status: verified on device (iPhone 17 Pro, iOS 27.2.1), 2026-11-27. Both assumptions hold.**
 
 Questions (decisions Q10 amendment 2 and "Unverified"):
 1. Do 14 non-repeating `UNCalendarNotificationTrigger`s with `dateComponents.timeZone == nil` all appear in `pendingNotificationRequests()`?
@@ -15,3 +15,7 @@ Simulator, 2026-11-27 (iPhone 18 Pro, iOS 27.2, Xcode 27.2):
 
 So both tests are disabled unless authorization is `.authorized`, and run on a device where Daytrack was allowed.
 The scheduler (M3.13 step 2) is tested against `FakeNotificationCenterClient` meanwhile.
+
+Device, 2026-11-27 (iPhone 17 Pro, iOS 27.2.1, Daytrack allowed notifications, free Personal Team):
+- `realCenterHoldsFourteenFloatingTriggers`: passed, so all 14 floating triggers are pending.
+- `replacingKeepsPendingAtOrBelow64`: passed.
