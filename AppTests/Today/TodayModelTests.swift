@@ -15,7 +15,7 @@ private struct NoReminderSpy: ReminderScheduling { func replan(record: Record, n
 @MainActor @Suite struct TodayModelTests {
     let tz = TimeZone(identifier: "UTC")!
     let day = DayKey("2027-07-22")!
-    let clock = StepClock(ISO8601DateFormatter().date(from: "2027-07-22T10:00:00Z")!)
+    private let clock = StepClock(ISO8601DateFormatter().date(from: "2027-07-22T10:00:00Z")!)
     let store = InMemoryRecordStore()
 
     private func model(_ trackers: [Tracker]) -> (TodayModel, Recorder) {
