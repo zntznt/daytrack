@@ -34,24 +34,34 @@ struct RootView: View {
     }
 }
 
+/// The screens Settings pushes. The board reaches Trackers only through `TabsView.showTrackers` (M8.02 reuses it).
+enum SettingsRoute: Hashable { case trackers, archived }
+
 /// History and Report join in M5.03 and M6.03 (Q7a).
 struct TabsView: View {
     enum Tab: Hashable { case today, settings }
 
     let state: AppState
     @State var tab: Tab
+    @State private var settingsPath: [SettingsRoute] = []
     let onErased: () -> Void
 
     var body: some View {
         TabView(selection: $tab) {
             SwiftUI.Tab("Today", systemImage: "sun.max", value: Tab.today) {
-                // "Bring one back" goes to Settings › Trackers; Settings is a placeholder until M3.15.
-                TodayContainer(state: state, onBringBack: { tab = .settings })
+                // "Bring one back" lands on the archived list, where bring-back is (Q7a).
+                TodayContainer(state: state, onBringBack: { showTrackers(archived: true) })
             }
             SwiftUI.Tab("Settings", systemImage: "gearshape", value: Tab.settings) {
-                SettingsContainer(state: state, onErased: onErased)
+                SettingsContainer(state: state, path: $settingsPath, onErased: onErased)
             }
         }
+    }
+
+    /// The one route from the board to Settings › Trackers, optionally on to its archived list.
+    private func showTrackers(archived: Bool) {
+        settingsPath = archived ? [.trackers, .archived] : [.trackers]
+        tab = .settings
     }
 }
 
