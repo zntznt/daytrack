@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Settings: Trackers, Day (with the reminder), Data, then the version (HANDOFF §3, Q7a). Plain values and closures only.
-struct SettingsView<ReminderRows: View, DataRows: View>: View {
+struct SettingsView<ReminderRows: View, DataRows: View, Destination: View>: View {
+    @Binding var path: [SettingsRoute]
     /// Each hour 0–23 with its derived label (`Copy.settingsLockHour`).
     let hours: [(hour: Int, label: String)]
     let lockHour: Int
@@ -12,13 +13,13 @@ struct SettingsView<ReminderRows: View, DataRows: View>: View {
     let onCancelLower: () -> Void
     @ViewBuilder let reminderRows: ReminderRows
     @ViewBuilder let dataRows: DataRows
+    @ViewBuilder let destination: (SettingsRoute) -> Destination
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 Section {
-                    // Placeholder until M3.15.
-                    NavigationLink("Trackers") { Text("Trackers") }
+                    NavigationLink("Trackers", value: SettingsRoute.trackers)
                         .accessibilityIdentifier("settings.trackers")
                 }
                 Section("Day") {
@@ -38,6 +39,7 @@ struct SettingsView<ReminderRows: View, DataRows: View>: View {
             .scrollContentBackground(.hidden)
             .background(AmbientBackground())
             .navigationTitle("Settings")
+            .navigationDestination(for: SettingsRoute.self, destination: destination)
         }
         // On the stack, not the list: the hour list is still pushed when the confirm is asked.
         .alert("Close yesterday now?", isPresented: Binding(get: { isConfirmingLower }, set: { if !$0 { onCancelLower() } })) {
