@@ -21,9 +21,20 @@ struct TodayView: View {
     let onDraggingChanged: (Bool) -> Void
     let onSkipRest: () -> Void, onBringBack: () -> Void, onAmend: () -> Void, onOpenNote: () -> Void
 
+    /// The scroll view's visible height, the whole content's height, and the rows' share of it.
+    @State private var viewport: CGFloat = 0
+    @State private var content: CGFloat = 0
+    @State private var rowsHeight: CGFloat = 0
+
+    /// The free board height split across the rows, clamped to 72–112pt (decisions "Board density").
+    private var rowHeight: CGFloat {
+        guard !rows.isEmpty, viewport > 0 else { return 72 }
+        return min(max((viewport - (content - rowsHeight)) / CGFloat(rows.count), 72), 112)
+    }
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: Tokens.Space.m) {
                 HStack {
                     Text(verbatim: dayName)
                         .typography(.dayName).foregroundStyle(Tokens.text)
@@ -39,7 +50,9 @@ struct TodayView: View {
                 }
             }
             .padding(.horizontal, 22)
+            .onGeometryChange(for: CGFloat.self, of: \.size.height) { content = $0 }
         }
+        .onGeometryChange(for: CGFloat.self, of: { $0.size.height - $0.safeAreaInsets.top - $0.safeAreaInsets.bottom }) { viewport = $0 }
         .scrollBounceBehavior(.basedOnSize)
         .background(AmbientBackground())
         .preferredColorScheme(.dark)
@@ -47,16 +60,19 @@ struct TodayView: View {
 
     @ViewBuilder private var board: some View {
         DotStripView(values: rows.map(\.value), label: dotStripLabel)
+            // At least 16pt clear of the first row, on top of the stack's spacing.
+            .padding(.bottom, Tokens.Space.l - Tokens.Space.m)
         if isDayOne {
             // No "tap the number to skip" hint: the value button's label carries skip on every row (decisions Q4).
             Text("Drag any track to set it.").typography(.caption).foregroundStyle(Tokens.textSecondary)
         }
         VStack(spacing: 0) {
             ForEach(rows, id: \.tracker.id) { row in
-                SliderRowView(state: row, onPreview: { _ in }, onCommit: { onCommit(row.tracker, $0) },
+                SliderRowView(state: row, height: rowHeight, onPreview: { _ in }, onCommit: { onCommit(row.tracker, $0) },
                               onOpenPad: { onOpenPad(row.tracker) }, onDraggingChanged: onDraggingChanged)
             }
         }
+        .onGeometryChange(for: CGFloat.self, of: \.size.height) { rowsHeight = $0 }
         .disabled(!isOpen)
         if let skipRestTitle {
             Button(skipRestTitle, action: onSkipRest)

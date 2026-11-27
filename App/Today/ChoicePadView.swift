@@ -21,14 +21,25 @@ struct ChoicePadView: View {
         }
     }
 
+    /// Words ("Absent" … "Severe") get one full-width key per row so they never squeeze; numbers keep the grid.
+    private var stopsAreWords: Bool { stops.contains { $0.title.count > 3 } }
+
     var body: some View {
-        VStack(spacing: 12) {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 64), spacing: 8)], spacing: 8) {
-                ForEach(stops, id: \.self) { key($0) }
+        // Scrolls only when the keys outgrow the sheet (word stops at large text sizes).
+        ScrollView {
+            VStack(spacing: Tokens.Space.m) {
+                if stopsAreWords {
+                    VStack(spacing: Tokens.Space.s) { ForEach(stops, id: \.self) { key($0) } }
+                } else {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 64), spacing: Tokens.Space.s)], spacing: Tokens.Space.s) {
+                        ForEach(stops, id: \.self) { key($0) }
+                    }
+                }
+                ForEach(others, id: \.self) { key($0) }
             }
-            ForEach(others, id: \.self) { key($0) }
+            .padding(22)
         }
-        .padding(22)
+        .scrollBounceBehavior(.basedOnSize)
         .tint(Tokens.accent)
         .controlSize(.large)
     }
