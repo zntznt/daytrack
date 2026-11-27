@@ -10,19 +10,35 @@ final class TodayModel {
     @ObservationIgnored private let clock: Clock
     @ObservationIgnored private let tz: TimeZone
     @ObservationIgnored private var held: Record?
+    /// A day boundary that arrived mid-drag; it fires on release (decisions Q1).
+    @ObservationIgnored private var tickHeld = false
+    /// True for Today, which moves to each new day; Amend stays on the day it opened.
+    @ObservationIgnored private let follows: Bool
     /// The record the board shows.
     private(set) var record: Record
-    /// shortcut: fixed at creation; the day turning on screen relabels to yesterday in M3.08.
-    let day: DayKey
+    private(set) var day: DayKey
 
     @ObservationIgnored var isDragging = false {
-        didSet { if !isDragging, let held { self.held = nil; receive(held) } }
+        didSet {
+            guard !isDragging else { return }
+            if tickHeld { tickHeld = false; tick() } else if let held { self.held = nil; receive(held) }
+        }
     }
 
-    init(recorder: Recorder, clock: Clock, tz: TimeZone) {
-        (self.recorder, self.clock, self.tz) = (recorder, clock, tz)
+    /// `day` nil follows today.
+    init(recorder: Recorder, clock: Clock, tz: TimeZone, day: DayKey? = nil) {
+        (self.recorder, self.clock, self.tz, follows) = (recorder, clock, tz, day == nil)
         record = recorder.record
-        day = LocalCalendar(timeZone: tz).dayKey(for: clock.now)
+        self.day = day ?? LocalCalendar(timeZone: tz).dayKey(for: clock.now)
+    }
+
+    /// A day boundary: close what the clock has closed and, for Today, relabel to the new day. Values stay keyed to their date.
+    func tick() {
+        if isDragging { tickHeld = true; return }
+        try? recorder.refresh()
+        if follows { day = LocalCalendar(timeZone: tz).dayKey(for: clock.now) }
+        held = nil
+        receive(recorder.record)
     }
 
     /// A newer record: shown now, or on release when a drag is live.
@@ -59,6 +75,15 @@ final class TodayModel {
         var style = Date.FormatStyle.dateTime.weekday(.wide)
         style.timeZone = tz
         return LocalCalendar(timeZone: tz).startOfDay(day).formatted(style)
+    }
+
+    /// "until Wed 20:00" while yesterday is open; nil on Amend, at lock hour 0, or once yesterday has closed.
+    var amendChip: String? {
+        let s = record.settings
+        guard follows, case .yesterdayOpen(let until) = DayClosing.status(
+            of: day.adding(days: -1), now: clock.now, lockHour: s.lockHour, closedThrough: s.closedThrough, tz: tz)
+        else { return nil }
+        return Copy.amendChip(closeInstant: until, timeZone: tz, locale: .autoupdatingCurrent)
     }
 
     /// "Skip the rest of today"; nil when there is no blank left to fill or the day has closed.

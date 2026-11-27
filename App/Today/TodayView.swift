@@ -8,20 +8,28 @@ struct TodayView: View {
     let rows: [RowState]
     let dotStripLabel: String
     let isBoardEmpty: Bool, isDayOne: Bool
+    /// False once the day has closed: the rows stop taking input.
+    let isOpen: Bool
+    /// nil hides the amend chip.
+    let amendChip: String?
     /// nil hides the day action.
     let skipRestTitle: String?
     let onCommit: (Tracker, DayValue?) -> Void
     let onOpenPad: (Tracker) -> Void
     let onDraggingChanged: (Bool) -> Void
-    let onSkipRest: () -> Void, onBringBack: () -> Void
+    let onSkipRest: () -> Void, onBringBack: () -> Void, onAmend: () -> Void
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text(verbatim: dayName)
-                    .typography(.dayName).foregroundStyle(Tokens.text)
-                    .accessibilityAddTraits(.isHeader)
-                    .accessibilityIdentifier(dayID)
+                HStack {
+                    Text(verbatim: dayName)
+                        .typography(.dayName).foregroundStyle(Tokens.text)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityIdentifier(dayID)
+                    Spacer()
+                    if let amendChip { AmendChipView(title: amendChip, onTap: onAmend) }
+                }
                 if isBoardEmpty {
                     BoardEmptyView(onBringBack: onBringBack)
                 } else {
@@ -47,6 +55,7 @@ struct TodayView: View {
                               onOpenPad: { onOpenPad(row.tracker) }, onDraggingChanged: onDraggingChanged)
             }
         }
+        .disabled(!isOpen)
         if let skipRestTitle {
             Button(skipRestTitle, action: onSkipRest)
                 .buttonStyle(.glass)
