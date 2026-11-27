@@ -16,6 +16,7 @@ struct TrackersView: View {
                 ForEach(active) { tracker in
                     Label(tracker.name, systemImage: tracker.symbol)
                         .foregroundStyle(Tokens.text)
+                        .accessibilityElement(children: .combine)
                         .accessibilityIdentifier("trackers.row.\(tracker.name)")
                         .swipeActions { Button("Archive") { onArchive(tracker) }.tint(Tokens.accent) }
                 }
