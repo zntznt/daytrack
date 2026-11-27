@@ -61,6 +61,6 @@ struct StarterPickerView: View {
             .frame(minHeight: 56).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
+        .accessibilityAddTraits(on ? .isSelected : [])
     }
 }
