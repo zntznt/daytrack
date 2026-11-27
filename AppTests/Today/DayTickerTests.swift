@@ -40,7 +40,8 @@ private final class StepClock: Clock, @unchecked Sendable { var now: Date; init(
         clock.now = at("20:00:01")
         ticker.refresh()
         // Nothing moves under the finger: yesterday is not closed yet.
-        #expect(recorder.record.settings.closedThrough == nil && model.record.settings.closedThrough == nil)
+        let before = today.adding(days: -2)
+        #expect(recorder.record.settings.closedThrough == before && model.record.settings.closedThrough == before)
         model.commit(.set(6), to: sleep)
         model.isDragging = false
         #expect(model.record.settings.closedThrough == today.adding(days: -1))
