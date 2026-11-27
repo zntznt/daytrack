@@ -35,7 +35,7 @@ final class OnboardingUITests: XCTestCase {
     func testOnboardingStatesCopyPromiseAndNoCloud() {
         let app = launch()
         XCTAssertTrue(app.buttons["Pick your first sliders"].waitForExistence(timeout: 10))
-        let texts = app.staticTexts.allElementsBoundByIndex.map(\.label).joined(separator: "\n")
+        let texts = app.staticTexts.allElementsBoundByIndex.map { $0.label }.joined(separator: "\n")
         XCTAssertTrue(texts.contains("Keep a copy whenever"), texts)
         XCTAssertTrue(texts.contains("One tap saves a file you keep. Daytrack never sees where it goes."), texts)
         for banned in ["cloud", "google drive", "backup"] {
