@@ -37,11 +37,10 @@ final class NotificationScheduler: ReminderScheduling, @unchecked Sendable {
             state.remindersScheduledThrough = plan.last?.day
             try? deviceState.save(state)
         }
-        let requests = plan.map(Self.request)
         enqueue { client in
             await Self.removeReminders(client)
             // Unauthorized, `add` throws; nothing to do until permission is given (M3.14).
-            for r in requests { try? await client.add(r) }
+            for item in plan { try? await client.add(Self.request(item)) }
         }
     }
 
