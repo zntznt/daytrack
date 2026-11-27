@@ -38,7 +38,7 @@ import Testing
         #expect(blank.0.entries[today.adding(days: -1)] == nil)
         #expect(blank.0.settings.reminderAt == Settings.ReminderTime(hour: 21, minute: 30))
         #expect(blank.1.remindersScheduledThrough == today.adding(days: 13))
-        #expect(Fixtures.make("allArchived", today: today, tz: tz).0.trackers.allSatisfy(\.isArchived))
+        #expect(Fixtures.make("allArchived", today: today, tz: tz).0.trackers.allSatisfy { $0.isArchived })
         #expect(Fixtures.make("ninetyDaysWithRevision", today: today, tz: tz).0.revisions.count == 1)
     }
 }
