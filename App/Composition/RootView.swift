@@ -19,7 +19,7 @@ struct RootView: View {
     @ViewBuilder private var routed: some View {
         switch state.route {
         case .onboarding:
-            Text("Daytrack") // placeholder until M3.03
+            OnboardingContainer(trackers: state.trackers)
         case .tabs:
             TabsView(today: LocalCalendar(timeZone: state.env.timeZone).dayKey(for: state.env.clock.now),
                      tab: state.env.screen == "settings" ? .settings : .today)
