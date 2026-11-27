@@ -65,7 +65,7 @@ final class ReminderUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Remind me at 21:30"].exists)
         XCTAssertTrue(app.buttons["No reminder"].exists)
         // No "asks again" promise (design-review Medium 16).
-        let texts = (app.staticTexts.allElementsBoundByIndex + app.buttons.allElementsBoundByIndex).map(\.label).joined(separator: "\n").lowercased()
+        let texts = (app.staticTexts.allElementsBoundByIndex + app.buttons.allElementsBoundByIndex).map { $0.label }.joined(separator: "\n").lowercased()
         for banned in ["again", "tomorrow"] { XCTAssertFalse(texts.contains(banned), banned) }
         app.buttons["No reminder"].tap()
         XCTAssertTrue(dayOne(app).waitForNonExistence(timeout: 5))
